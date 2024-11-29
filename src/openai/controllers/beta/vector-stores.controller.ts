@@ -6,9 +6,10 @@ import { VectorStoresService } from '../../services/beta/beta.service'; // Adjus
 @ApiTags('Beta - Vector Stores')
 @Controller('beta/vector-stores')
 export class VectorStoresController {
-  constructor(private readonly VectorStoresService: VectorStoresService) {}
+    // Total 20 Endpoints
+    constructor(private readonly VectorStoresService: VectorStoresService) {}
 
-// VectorStores Endpoints
+// VectorStores 5 Endpoints 
     @ApiOperation({ summary: 'Create a vector store' })
     @Post()
     createVectorStore(@Body() createVectorStoreDto: CreateVectorStoreDto) {
@@ -42,7 +43,7 @@ export class VectorStoresController {
         return this.VectorStoresService.deleteVectorStore(vectorStoreId);
     }
 
-    // VectorStores-Files Endpoints
+    // VectorStores-Files 8 Endpoints
         @ApiOperation({ summary: 'Create a vector store file' })
         @Post(':vectorStoreId/files')
         createVectorStoreFile(
@@ -81,42 +82,42 @@ export class VectorStoresController {
 
         @ApiOperation({ summary: 'Create a vector store file and poll until complete' })
         @Post(':vectorStoreId/files/create-and-poll')
-        createAndPoll(
+        createFileAndPoll(
             @Param('vectorStoreId') vectorStoreId: string,
             @Body() createAndPollDto: FileCreateParamsDto,
         ) {
-            return this.VectorStoresService.createAndPoll(vectorStoreId, createAndPollDto);
+            return this.VectorStoresService.createFileAndPoll(vectorStoreId, createAndPollDto);
         }
 
         @ApiOperation({ summary: 'Poll the processing status of a vector store file' })
         @Get(':vectorStoreId/files/:fileId/poll')
-        poll(
+        pollFile(
             @Param('vectorStoreId') vectorStoreId: string,
             @Param('fileId') fileId: string,
             @Query('pollIntervalMs') pollIntervalMs?: number,
         ) {
-            return this.VectorStoresService.poll(vectorStoreId, fileId, { pollIntervalMs });
+            return this.VectorStoresService.pollFile(vectorStoreId, fileId, { pollIntervalMs });
         }
 
         @ApiOperation({ summary: 'Upload a file to a vector store' })
         @Post(':vectorStoreId/files/upload')
-        upload(
+        uploadFile(
             @Param('vectorStoreId') vectorStoreId: string,
             @Body() uploadDto: UploadFileDto,
         ) {
-            return this.VectorStoresService.upload(vectorStoreId, uploadDto);
+            return this.VectorStoresService.uploadFile(vectorStoreId, uploadDto);
         }
 
         @ApiOperation({ summary: 'Upload a file to a vector store and poll until complete' })
         @Post(':vectorStoreId/files/upload-and-poll')
-        uploadAndPoll(
+        uploadFileAndPoll(
             @Param('vectorStoreId') vectorStoreId: string,
             @Body() uploadAndPollDto: UploadFileDto,
         ) {
-            return this.VectorStoresService.uploadAndPoll(vectorStoreId, uploadAndPollDto);
+            return this.VectorStoresService.uploadFileAndPoll(vectorStoreId, uploadAndPollDto);
         }
 
-    // VectorStores-FileBatch Endpoints
+    // VectorStores-FileBatch 7 Endpoints
         @ApiOperation({ summary: 'Create a vector store file batch' })
         @Post(':vectorStoreId/file-batches')
         createVectorStoreFileBatch(
@@ -150,7 +151,7 @@ export class VectorStoresController {
             @Param('vectorStoreId') vectorStoreId: string,
             @Body() createBatchDto: FileBatchCreateParamsDto,
         ) {
-            return this.VectorStoresService.createAndPoll(vectorStoreId, createBatchDto);
+            return this.VectorStoresService.createFileBatchAndPoll(vectorStoreId, createBatchDto);
         }
 
         @ApiOperation({ summary: 'List all files in a vector store file batch' })
@@ -170,15 +171,15 @@ export class VectorStoresController {
             @Param('batchId') batchId: string,
             @Query('pollIntervalMs') pollIntervalMs?: number,
         ) {
-            return this.VectorStoresService.poll(vectorStoreId, batchId, { pollIntervalMs });
+            return this.VectorStoresService.pollFileBatch(vectorStoreId, batchId, { pollIntervalMs });
         }
 
         @ApiOperation({ summary: 'Upload multiple files and poll until batch completes' })
         @Post(':vectorStoreId/file-batches/upload-and-poll')
-        uploadFilesAndPollBatch(
+        uploadFileBatchAndPoll(
             @Param('vectorStoreId') vectorStoreId: string,
-            @Body() uploadBatchDto: UploadBatchFilesDto,
+            @Body() uploadBatchDto: UploadFileBatchDto,
         ) {
-            return this.VectorStoresService.uploadAndPoll(vectorStoreId, uploadBatchDto);
+            return this.VectorStoresService.uploadFileBatchAndPoll(vectorStoreId, uploadBatchDto);
         }
 }

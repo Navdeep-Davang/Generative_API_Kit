@@ -6,7 +6,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 export class ThreadsController {
   constructor(private readonly threadsService: ThreadsService) {}
 
-// Threads Endpoints
+// Threads 7 Endpoints
     @Post()
     @ApiOperation({ summary: 'Create a thread' })
     create(@Body() body: ThreadCreateDto) {
@@ -53,7 +53,7 @@ export class ThreadsController {
     }
 
     
-    // Runs Endpoints
+    // Runs 11  Endpoints
         @Post(':threadId/runs')
         @ApiOperation({ summary: 'Create a run for a thread' })
         createRun(@Param('threadId') threadId: string, @Body() body: RunCreateDto) {
@@ -98,7 +98,7 @@ export class ThreadsController {
         async pollThreadRun(
             @Param('threadId') threadId: string,
             @Param('runId') runId: string,
-            @Body() options?: Core.RequestOptions & { pollIntervalMs?: number },
+            @Body() options?: RequestOptions & { pollIntervalMs?: number },
         ): Promise<Run> {
             return this.threadsService.pollThreadRun(threadId, runId, options);
         }
@@ -127,7 +127,7 @@ export class ThreadsController {
             return this.threadsService.submitToolOutputsStreamThreadRun(params.threadId, params.runId, body);
         }
 
-        // Steps Endpoints
+        // Steps 2 Endpoints
             @Get(':threadId/runs/:runId/steps/:stepId')
             @ApiOperation({ summary: 'Retrieve a specific run step' })
             retrieveThreadRunStep(
@@ -146,7 +146,7 @@ export class ThreadsController {
             return this.threadsService.listThreadRunSteps(params.threadId, params.runId, query);
             }
         
-    // Messages Endpoints
+    // Messages 5 Endpoints
         @Post(':threadId/messages')
         @ApiOperation({ summary: 'Create a message for a thread' })
         createThreadMessage(

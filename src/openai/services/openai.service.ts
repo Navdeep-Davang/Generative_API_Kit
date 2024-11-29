@@ -1,193 +1,152 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class OpenAIService {
-  private readonly openai: OpenAI;
-  private readonly logger = new Logger(OpenAIService.name);
+  private openai: OpenAI;
 
   constructor(private configService: ConfigService) {
     this.openai = new OpenAI({
       apiKey: this.configService.get<string>('OPENAI_API_KEY'),
-      baseURL: this.configService.get<string>('OPENAI_BASE_URL'),
     });
   }
 
-  async generateCompletion(completionDto: CompletionDto) {
-    try {
-      const completion = await this.openai.chat.completions.create({
-        messages: [{ role: 'user' as const, content: completionDto.prompt }],
-        model: completionDto.model || 'gpt-3.5-turbo',
-        temperature: completionDto.temperature,
-        max_tokens: completionDto.maxTokens,
-      });
+// Completions 1 Service
+	createCompletion(createCompletionDto: CreateCompletionDto) {
+		return this.openai.completions.create(createCompletionDto);
+	}
 
-      return {
-        success: true,
-        data: completion.choices[0].message.content,
-        usage: completion.usage,
-      };
-    } catch (error) {
-      this.logger.error(`OpenAI Completion Error: ${error.message}`);
-      throw error;
-    }
-  }
+// Embeddings 1 Service
+	createEmbedding(createEmbeddingDto: CreateEmbeddingDto) {
+	return this.openai.embeddings.create(createEmbeddingDto);
+	}
 
-  async generateImage(imageDto: ImageGenerationDto) {
-    try {
-      const response = await this.openai.images.generate({
-        prompt: imageDto.prompt,
-        n: imageDto.n || 1,
-        size: imageDto.size || '1024x1024',
-      });
+// Files 6 Services
+	createFile(createFileDto: CreateFileDto) {
+		return this.openai.files.create(createFileDto);
+	}
 
-      return {
-        success: true,
-        data: response.data,
-      };
-    } catch (error) {
-      this.logger.error(`OpenAI Image Generation Error: ${error.message}`);
-      throw error;
-    }
-  }
+	retrieveFile(fileId: string) {
+		return this.openai.files.retrieve(fileId);
+	}
 
-  async analyzeImage(visionDto: VisionAnalysisDto) {
-    try {
-      const messages = [
-        {
-          role: 'user' as const,
-          content: [
-            { type: 'text' as const, text: visionDto.prompt },
-            {
-              type: 'image_url' as const,
-              image_url: { url: visionDto.imageUrl },
-            },
-          ],
-        },
-      ];
+	listFiles(query: ListFilesDto) {
+		return this.openai.files.list(query);
+	}
 
-      const response = await this.openai.chat.completions.create({
-        model: 'gpt-4-vision-preview',
-        messages,
-        max_tokens: visionDto.maxTokens || 300,
-      });
+	deleteFile(fileId: string) {
+		return this.openai.files.del(fileId);
+	}
 
-      return {
-        success: true,
-        data: response.choices[0].message.content,
-        usage: response.usage,
-      };
-    } catch (error) {
-      this.logger.error(`OpenAI Vision Error: ${error.message}`);
-      throw error;
-    }
-  }
+	getFileContent(fileId: string) {
+		return this.openai.files.content(fileId);
+	}
 
-  async textToSpeech(audioDto: TextToSpeechDto) {
-    try {
-      const response = await this.openai.audio.speech.create({
-        input: audioDto.input,
-        model: audioDto.model || 'tts-1',
-        voice: audioDto.voice || 'alloy',
-      });
+	waitForProcessing(fileId: string) {
+		return this.openai.files.waitForProcessing(fileId);
+	}
 
-      const buffer = Buffer.from(await response.arrayBuffer());
-      return {
-        success: true,
-        data: buffer.toString('base64'),
-        format: 'audio/mp3',
-      };
-    } catch (error) {
-      this.logger.error(`OpenAI Text-to-Speech Error: ${error.message}`);
-      throw error;
-    }
-  }
+// Images 3 Services
+	generateImage(generateImageDto: GenerateImageDto) {
+		return this.openai.images.generate(generateImageDto);
+	}
 
-  async speechToText(speechDto: SpeechToTextDto) {
-    try {
-      const audioResponse = await fetch(speechDto.audioUrl);
-      const audioBlob = await audioResponse.blob();
-      
-      const audioFile = new File([audioBlob], 'audio.mp3', {
-        type: audioBlob.type,
-        lastModified: Date.now(),
-      });
+	createImageVariation(createImageVariationDto: CreateImageVariationDto) {
+		return this.openai.images.createVariation(createImageVariationDto);
+	}
 
-      const response = await this.openai.audio.transcriptions.create({
-        file: audioFile,
-        model: speechDto.model || 'whisper-1',
-        language: speechDto.language,
-      });
+	editImage(editImageDto: EditImageDto) {
+		return this.openai.images.edit(editImageDto);
+	}
 
-      return {
-        success: true,
-        data: response.text,
-      };
-    } catch (error) {
-      this.logger.error(`OpenAI Speech-to-Text Error: ${error.message}`);
-      throw error;
-    }
-  }
+// Audio 3 Services
+	createTranscription(createTranscriptionDto: CreateTranscriptionDto) {
+		return this.openai.audio.transcriptions.create(createTranscriptionDto);
+	}
 
-  async generateEmbeddings(input: string) {
-    try {
-      const response = await this.openai.embeddings.create({
-        input,
-        model: 'text-embedding-ada-002',
-      });
+	createTranslation(createTranslationDto: CreateTranslationDto) {
+		return this.openai.audio.translations.create(createTranslationDto);
+	}
 
-      return {
-        success: true,
-        data: response.data[0].embedding,
-        usage: response.usage,
-      };
-    } catch (error) {
-      this.logger.error(`OpenAI Embeddings Error: ${error.message}`);
-      throw error;
-    }
-  }
+	generateSpeech(generateSpeechDto: GenerateSpeechDto) {
+		return this.openai.audio.speech.create(generateSpeechDto);
+	}
 
-  async moderateContent(input: string) {
-    try {
-      const response = await this.openai.moderations.create({
-        input,
-      });
+// Moderations 1 Service
+	createModeration(createModerationDto: CreateModerationDto) {
+		return this.openai.moderations.create(createModerationDto);
+	}
 
-      return {
-        success: true,
-        data: response.results[0],
-      };
-    } catch (error) {
-      this.logger.error(`OpenAI Moderation Error: ${error.message}`);
-      throw error;
-    }
-  }
+// Models 3 Services
+	retrieveModel(modelId: string) {
+		return this.openai.models.retrieve(modelId);
+	}
 
-  async reasoning(reasoningDto: ReasoningDto) {
-    try {
-      const messages = [
-        ...(reasoningDto.systemPrompts?.map(prompt => ({
-          role: 'system' as const,
-          content: prompt,
-        })) || []),
-        { role: 'user' as const, content: reasoningDto.prompt },
-      ];
+	listModels() {
+		return this.openai.models.list();
+	}
 
-      const response = await this.openai.chat.completions.create({
-        messages,
-        model: reasoningDto.model || 'gpt-4',
-        temperature: reasoningDto.temperature || 0.7,
-      });
+	deleteModel(modelId: string) {
+		return this.openai.models.del(modelId);
+	}
 
-      return {
-        success: true,
-        data: response.choices[0].message.content,
-        usage: response.usage,
-      };
-    } catch (error) {
-      this.logger.error(`OpenAI Reasoning Error: ${error.message}`);
-      throw error;
-    }
-  }
+  // Fine-tuning Jobs 6 Services
+	createFineTuningJob(createFineTuningJobDto: CreateFineTuningJobDto) {
+		return this.openai.fineTuning.jobs.create(createFineTuningJobDto);
+	}
+
+	retrieveFineTuningJob(jobId: string) {
+		return this.openai.fineTuning.jobs.retrieve(jobId);
+	}
+
+	listFineTuningJobs(query: ListFineTuningJobsDto) {
+		return this.openai.fineTuning.jobs.list(query);
+	}
+
+	cancelFineTuningJob(jobId: string) {
+		return this.openai.fineTuning.jobs.cancel(jobId);
+	}
+
+	listFineTuningJobEvents(jobId: string, query: ListFineTuningJobEventsDto) {
+		return this.openai.fineTuning.jobs.listEvents(jobId, query);
+	}
+
+	listFineTuningJobCheckpoints(jobId: string, query: ListFineTuningJobCheckpointsDto) {
+		return this.openai.fineTuning.jobs.checkpoints.list(jobId, query);
+	}
+
+  // Batches 4 Services
+	createBatch(createBatchDto: CreateBatchDto) {
+		return this.openai.batches.create(createBatchDto);
+	}
+
+	retrieveBatch(batchId: string) {
+		return this.openai.batches.retrieve(batchId);
+	}
+
+	listBatches(query: ListBatchDto) {
+		return this.openai.batches.list(query);
+	}
+
+	cancelBatch(batchId: string, cancelBatchDto: CancelBatchDto) {
+		return this.openai.batches.cancel(batchId, cancelBatchDto);
+	}
+
+  // Uploads 4 Services
+	createUpload(createUploadDto: CreateUploadDto) {
+		return this.openai.uploads.create(createUploadDto);
+	}
+
+	cancelUpload(uploadId: string, cancelUploadDto: CancelUploadDto) {
+		return this.openai.uploads.cancel(uploadId, cancelUploadDto);
+	}
+
+	completeUpload(uploadId: string, completeUploadDto: CompleteUploadDto) {
+		return this.openai.uploads.complete(uploadId, completeUploadDto);
+	}
+
+	createPart(uploadId: string, createPartDto: CreatePartDto) {
+		return this.openai.uploads.parts.create(uploadId, createPartDto);
+	}
 }

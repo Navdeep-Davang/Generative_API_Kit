@@ -1,27 +1,26 @@
 import { Controller, Post, Get, Delete, Param, Body, Query } from '@nestjs/common';
 import { OpenAIService } from './openai.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { BetaController } from './controller/beta.controller';
 
 @Controller('openai')
 @ApiTags('OpenAI')
 export class OpenAIController {
   constructor(private readonly openAIService: OpenAIService) {}
   
-// Completions Endpoint
+// Completions 1 Endpoint
   @Post('completions')
   @ApiOperation({ summary: 'Create a completion based on input prompts' })
   async createCompletion(@Body() body: CreateCompletionDto) {
     return this.openAIService.createCompletion(body);
   }
-// Embeddings Endpoint
+// Embeddings 1 Endpoint
   @Post('embeddings')
   @ApiOperation({ summary: 'Create embeddings for input text' })
   async createEmbedding(@Body() body: CreateEmbeddingDto) {
     return this.openAIService.createEmbedding(body);
   }
 
-// Files Endpoint
+// Files 6 Endpoint
   @Post('files')
   @ApiOperation({ summary: 'Upload a file for processing' })
   async createFile(@Body() body: CreateFileDto) {
@@ -52,7 +51,13 @@ export class OpenAIController {
     return this.openAIService.getFileContent(fileId);
   }
 
-// Image Endpoints 
+  @Get('files/:fileId/processing')
+  @ApiOperation({ summary: 'Wait for the file processing to complete' })
+  async waitForProcessing(@Param('fileId') fileId: string) {
+    return this.openAIService.waitForProcessing(fileId);
+  }
+
+// Image 3 Endpoints 
   @Post('images/generate')
   @ApiOperation({ summary: 'Generate an image from a text prompt' })
   async generateImage(@Body() body: GenerateImageDto) {
@@ -71,7 +76,7 @@ export class OpenAIController {
     return this.openAIService.editImage(body);
   }
 
-// Audio Endpoints 
+// Audio 3 Endpoints 
   @Post('audio/transcriptions')
   @ApiOperation({ summary: 'Transcribe audio into text' })
   async createTranscription(@Body() body: CreateTranscriptionDto) {
@@ -90,7 +95,7 @@ export class OpenAIController {
     return this.openAIService.generateSpeech(body);
   }
 
-// Moderation Endpoint
+// Moderation 1 Endpoint
   @Post('moderations')
   @ApiOperation({ summary: 'Classify text or image inputs for harmful content' })
   async createModeration(@Body() body: CreateModerationDto) {
@@ -98,7 +103,7 @@ export class OpenAIController {
   }
 
 
-// Model Endpoints
+// Model 3 Endpoints
   @Get('models/:modelId')
   @ApiOperation({ summary: 'Retrieve information about a specific model' })
   async retrieveModel(@Param('modelId') modelId: string) {
@@ -118,7 +123,7 @@ export class OpenAIController {
   }
   
 
-// Finetunig Endpoints
+// Finetunig Jobs 6 Endpoints
   @Post('fine-tuning/jobs')
   @ApiOperation({ summary: 'Create a new fine-tuning job' })
   async createFineTuningJob(@Body() body: CreateFineTuningJobDto) {
@@ -161,7 +166,7 @@ export class OpenAIController {
     return this.openAIService.listFineTuningJobCheckpoints(jobId, query);
   }
   
-// Batches Endpoints
+// Batches 4 Endpoints
   @Post('batches')
   @ApiOperation({ summary: 'Create and execute a batch from an uploaded file of requests' })
   async createBatch(@Body() body: CreateBatchDto) {
@@ -186,7 +191,7 @@ export class OpenAIController {
     return this.openAIService.cancelBatch(batchId, body);
   }
   
-// Uploads Endpoint
+// Uploads 4 Endpoint
   @Post('uploads')
   @ApiOperation({ summary: 'Create an upload object for file parts' })
   async createUpload(@Body() body: CreateUploadDto) {
