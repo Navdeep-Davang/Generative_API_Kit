@@ -1,55 +1,52 @@
 import { z } from "zod";
 import { RequestOptionsSchema } from '../RequestOptions/schema/RequestOptionsSchema';
 import {
-  CompletionCreateParams$inboundSchema,
   CompletionCreateParamsBase$inboundSchema,
   CompletionCreateParamsNonStreaming$inboundSchema,
   CompletionCreateParamsStreaming$inboundSchema,
 } from './schema/CompletionsSchema';
 import { createZodDto } from 'nestjs-zod';
-import { CompletionCreateParamsNonStreaming, CompletionCreateParamsStreaming } from "openai/resources";
 
-// Custom refinement to narrow the body based on the stream field
-const narrowedBodySchema = z
-  .union([
-    CompletionCreateParamsNonStreaming$inboundSchema,
-    CompletionCreateParamsStreaming$inboundSchema,
-    CompletionCreateParamsBase$inboundSchema,
-  ])
-  .refine((data) => {
-    // Check for stream presence and ensure `stream` matches the SDK expectations
-    if (data.stream === true) {
-      return !!(data as CompletionCreateParamsStreaming).stream; // Ensures stream is true for streaming
-    }
-    if (data.stream === false || data.stream === null) {
-      return !!(data as CompletionCreateParamsNonStreaming).stream; // Ensures stream is false or null for non-streaming
-    }
-    return true; // If stream is undefined or other, allow it
-  }, {
-    message: "Stream must be either true (for streaming) or false/null (for non-streaming)",
-  })
-  .refine((data) => {
-    // Ensure that when `stream` is false or null, we still have a valid base object (prompt is defined)
-    if (data.stream === null || data.stream === false) {
-      return data.model && data.prompt !== undefined;
-    }
-    return true;
-  }, {
-    message: "When stream is false or null, model and prompt must be provided",
-  })
-  .refine((data) => {
-    // Ensure that when stream is true, we have prompt defined
-    if (data.stream === true) {
-      return data.prompt !== undefined;
-    }
-    return true;
-  }, {
-    message: "When stream is true, prompt must be defined",
-  });
-
-// Main schema to check the body and options
+// Define the schema with the narrowing logic
 export const CreateCompletionSchema = z.object({
-  body: narrowedBodySchema,
+  body: z.union([
+    // Non-streaming schema refinement
+    CompletionCreateParamsNonStreaming$inboundSchema.refine((data) => {
+      // Ensure `stream` is false or null and prompt is defined for non-streaming
+      if (data.stream === false || data.stream === null) {
+        return data.prompt !== undefined;
+      }
+      return true;
+    }, {
+      message: "When stream is false or null, prompt must be defined",
+    }).transform((data) => {
+      // Set `stream` to false/null if not streaming
+      return {
+        ...data,
+        stream: data.stream === null || data.stream === false ? false : null,
+        prompt: data.prompt || [], // Default prompt to empty array if undefined
+      };
+    }),
+
+    // Streaming schema refinement
+    CompletionCreateParamsStreaming$inboundSchema.refine((data) => {
+      // Ensure `prompt` is defined for streaming
+      if (data.stream === true) {
+        return data.prompt !== undefined;
+      }
+      return true;
+    }, {
+      message: "When stream is true, prompt must be defined",
+    }).transform((data) => {
+      // Set `stream` to true for streaming
+      return {
+        ...data,
+        stream: true,
+        prompt: data.prompt || [], // Default prompt to empty array if undefined
+      };
+    })
+  ]),
+
   options: RequestOptionsSchema().optional(),
 });
 

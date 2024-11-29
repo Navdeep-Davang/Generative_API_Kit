@@ -8,6 +8,8 @@ const promptSchema = z.union([
   z.null(),
 ]).optional();
 
+// It is created for the foundation of other two schema/types/interface 
+// But dont know why it is passed explicitly in the sdk into create function
 export const CompletionCreateParamsBase$inboundSchema = z.object({
   model: z.union([
     z.string(),
@@ -50,6 +52,8 @@ export const CompletionCreateParamsNonStreaming$inboundSchema = CompletionCreate
   prompt: promptSchema.optional(),
 });
 
+
+//Dont know why this is created and passed explicitly in the sdk into create function
 export const CompletionCreateParams$inboundSchema = z.union([
   CompletionCreateParamsNonStreaming$inboundSchema, 
   CompletionCreateParamsStreaming$inboundSchema

@@ -1,7 +1,10 @@
 import { Controller, Post, Get, Delete, Param, Body, Query } from '@nestjs/common';
-import { OpenAIService } from './openai.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateCompletionDto } from '../dto/openai/Completions/completions.dto';
+import { CreateEmbeddingDto } from '../dto/openai/Embeddings/embeddings.dto';
+import { CreateFileDto, ListFilesDto, WaitForProcessingDto } from '../dto/openai/Files/files.dto';
+import { OpenAIService } from '../services/openai.service';
+import { RequestOptionsDto } from '../dto/openai/RequestOptions/request-options.dto';
 
 @Controller('openai')
 @ApiTags('OpenAI')
@@ -30,8 +33,11 @@ export class OpenAIController {
 
   @Get('files/:fileId')
   @ApiOperation({ summary: 'Retrieve details of a specific file by ID' })
-  async retrieveFile(@Param('fileId') fileId: string) {
-    return this.openAIService.retrieveFile(fileId);
+  async retrieveFile(
+    @Param('fileId') fileId: string,  // Extract fileId from the URL
+    @Body() options?: RequestOptionsDto   // Extract options from the body
+  ) {
+    return this.openAIService.retrieveFile(fileId, options);
   }
 
   @Get('files')
@@ -42,33 +48,43 @@ export class OpenAIController {
 
   @Delete('files/:fileId')
   @ApiOperation({ summary: 'Delete a file by ID' })
-  async deleteFile(@Param('fileId') fileId: string) {
-    return this.openAIService.deleteFile(fileId);
+  async deleteFile(
+    @Param('fileId') fileId: string,
+    @Body() options?: RequestOptionsDto  
+  ) {
+      return this.openAIService.deleteFile(fileId, options);
   }
 
   @Get('files/:fileId/content')
   @ApiOperation({ summary: 'Retrieve the content of a specific file' })
-  async getFileContent(@Param('fileId') fileId: string) {
-    return this.openAIService.getFileContent(fileId);
+  async getFileContent(
+    @Param('fileId') fileId: string,
+    @Body() options?: RequestOptionsDto  
+  ) {
+    return this.openAIService.getFileContent(fileId, options);
   }
 
   @Get('files/:fileId/processing')
   @ApiOperation({ summary: 'Wait for the file processing to complete' })
-  async waitForProcessing(@Param('fileId') fileId: string) {
-    return this.openAIService.waitForProcessing(fileId);
+  async waitForProcessing(
+    @Param('fileId') fileId: string,
+    @Body() options: WaitForProcessingDto,  // Use the WaitForProcessingDto to validate query params
+  )
+   {
+    return this.openAIService.waitForProcessing(fileId, options);
   }
 
 // Image 3 Endpoints 
-  @Post('images/generate')
-  @ApiOperation({ summary: 'Generate an image from a text prompt' })
-  async generateImage(@Body() body: GenerateImageDto) {
-    return this.openAIService.generateImage(body);
-  }
-
   @Post('images/variations')
   @ApiOperation({ summary: 'Create variations of an existing image' })
   async createImageVariation(@Body() body: CreateImageVariationDto) {
     return this.openAIService.createImageVariation(body);
+  }
+
+  @Post('images/generate')
+  @ApiOperation({ summary: 'Generate an image from a text prompt' })
+  async generateImage(@Body() body: GenerateImageDto) {
+    return this.openAIService.generateImage(body);
   }
 
   @Post('images/edit')

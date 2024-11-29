@@ -2,6 +2,11 @@ import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 import { ConfigService } from '@nestjs/config';
 import { CreateCompletionDto } from '../dto/openai/Completions/completions.dto';
+import { CompletionCreateParamsNonStreaming, CompletionCreateParamsStreaming } from 'openai/resources';
+import { CreateEmbeddingDto } from '../dto/openai/Embeddings/embeddings.dto';
+import { CreateFileDto, ListFilesDto, WaitForProcessingDto } from '../dto/openai/Files/files.dto';
+import { RequestOptionsDto } from '../dto/openai/RequestOptions/request-options.dto';
+import { CreateImageVariationDto, EditImageDto, GenerateImageDto } from '../dto/openai/Images/images.dto';
 
 @Injectable()
 export class OpenAIService {
@@ -15,52 +20,57 @@ export class OpenAIService {
 
 // Completions 1 Service
 	createCompletion(createCompletionDto: CreateCompletionDto) {
-		const {body, options}= createCompletionDto
+		const {body, options}= createCompletionDto		 
 		return this.openai.completions.create(body, options);
 	}
 
 // Embeddings 1 Service
 	createEmbedding(createEmbeddingDto: CreateEmbeddingDto) {
-	return this.openai.embeddings.create(createEmbeddingDto);
+		const {body, options}= createEmbeddingDto	
+		return this.openai.embeddings.create(body, options);
 	}
 
 // Files 6 Services
 	createFile(createFileDto: CreateFileDto) {
-		return this.openai.files.create(createFileDto);
+		const {body, options}= createFileDto
+		return this.openai.files.create(body, options);
 	}
 
-	retrieveFile(fileId: string) {
-		return this.openai.files.retrieve(fileId);
+	retrieveFile(fileId: string, options?:RequestOptionsDto) {
+		return this.openai.files.retrieve(fileId, options);
 	}
 
 	listFiles(query: ListFilesDto) {
 		return this.openai.files.list(query);
 	}
 
-	deleteFile(fileId: string) {
-		return this.openai.files.del(fileId);
+	deleteFile(fileId: string, options?:RequestOptionsDto) {
+		return this.openai.files.del(fileId, options);
 	}
 
-	getFileContent(fileId: string) {
-		return this.openai.files.content(fileId);
+	getFileContent(fileId: string, options?:RequestOptionsDto) {
+		return this.openai.files.content(fileId, options);
 	}
 
-	waitForProcessing(fileId: string) {
-		return this.openai.files.waitForProcessing(fileId);
+	waitForProcessing(fileId: string , options: WaitForProcessingDto) {
+		return this.openai.files.waitForProcessing(fileId, options);
 	}
 
 // Images 3 Services
-	generateImage(generateImageDto: GenerateImageDto) {
-		return this.openai.images.generate(generateImageDto);
-	}
-
 	createImageVariation(createImageVariationDto: CreateImageVariationDto) {
-		return this.openai.images.createVariation(createImageVariationDto);
+		const {body, options}= createImageVariationDto	
+		return this.openai.images.createVariation(body, options);
 	}
 
 	editImage(editImageDto: EditImageDto) {
-		return this.openai.images.edit(editImageDto);
+		const {body, options}= editImageDto
+		return this.openai.images.edit(body, options);
 	}
+
+	generateImage(generateImageDto: GenerateImageDto) {
+		const {body, options}= generateImageDto
+		return this.openai.images.generate(body, options);
+	}	
 
 // Audio 3 Services
 	createTranscription(createTranscriptionDto: CreateTranscriptionDto) {
