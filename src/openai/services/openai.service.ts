@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 import { ConfigService } from '@nestjs/config';
+import { CreateCompletionDto } from '../dto/openai/Completions/completions.dto';
 
 @Injectable()
 export class OpenAIService {
@@ -14,7 +15,8 @@ export class OpenAIService {
 
 // Completions 1 Service
 	createCompletion(createCompletionDto: CreateCompletionDto) {
-		return this.openai.completions.create(createCompletionDto);
+		const {body, options}= createCompletionDto
+		return this.openai.completions.create(body, options);
 	}
 
 // Embeddings 1 Service

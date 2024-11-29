@@ -1,6 +1,7 @@
 import { Controller, Post, Get, Delete, Param, Body, Query } from '@nestjs/common';
 import { OpenAIService } from './openai.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CreateCompletionDto } from '../dto/openai/Completions/completions.dto';
 
 @Controller('openai')
 @ApiTags('OpenAI')
