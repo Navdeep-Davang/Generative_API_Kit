@@ -1,3 +1,4 @@
+import { ParseChatCompletionDto } from '@/openai/dto/beta/chat/chat.dto';
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 import { Beta } from 'openai/resources'; // Assuming Beta is the SDK resource for chat completions
@@ -16,8 +17,9 @@ export class ChatService {
   }
 
   // Handling chat completion parsing
-  parseChatCompletion(parseChatCompletionDto: ParseChatCompletionDto, options?: CoreRequestOptionsDto) {
-    return this.chat.completions.parse(parseChatCompletionDto, options);
+  parseChatCompletion(parseChatCompletionDto: ParseChatCompletionDto) {
+    const {body, options}= parseChatCompletionDto
+    return this.chat.completions.parse(body, options);
   }
 
   // Running tools for a chat completion

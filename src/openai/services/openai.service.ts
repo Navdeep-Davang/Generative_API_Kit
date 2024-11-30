@@ -6,10 +6,11 @@ import { CreateEmbeddingDto } from '../dto/openai/Embeddings/embeddings.dto';
 import { CreateFileDto, ListFilesDto, WaitForProcessingDto } from '../dto/openai/Files/files.dto';
 import { RequestOptionsDto } from '../dto/openai/RequestOptions/request-options.dto';
 import { CreateImageVariationDto, EditImageDto, GenerateImageDto } from '../dto/openai/Images/images.dto';
-import { CreateModerationDto, CreateTranscriptionDto, CreateTranslationDto, GenerateSpeechDto } from '../dto/openai/Audio/audio.dto';
+import { CreateTranscriptionDto, CreateTranslationDto, GenerateSpeechDto } from '../dto/openai/Audio/audio.dto';
 import { CreateFineTuningJobDto, ListFineTuningJobCheckpointsDto, ListFineTuningJobEventsDto, ListFineTuningJobsDto } from '../dto/openai/FineTuning/finetuning.dto';
 import { CreateBatchDto, ListBatchDto } from '../dto/openai/Batches/batches.dto';
-import { CreateUploadDto } from '../dto/openai/Uploads/uploads.dto';
+import { CompleteUploadDto, CreatePartDto, CreateUploadDto } from '../dto/openai/Uploads/uploads.dto';
+import { CreateModerationDto } from '../dto/openai/Moderations/moderations.dto';
 
 @Injectable()
 export class OpenAIService {
@@ -164,15 +165,17 @@ export class OpenAIService {
 		return this.openai.uploads.create(body, options);
 	}
 
-	cancelUpload(uploadId: string, cancelUploadDto: CancelUploadDto) {
-		return this.openai.uploads.cancel(uploadId, cancelUploadDto);
+	cancelUpload(uploadId: string, options?:RequestOptionsDto) {
+		return this.openai.uploads.cancel(uploadId, options);
 	}
 
 	completeUpload(uploadId: string, completeUploadDto: CompleteUploadDto) {
-		return this.openai.uploads.complete(uploadId, completeUploadDto);
+		const {body, options}= completeUploadDto
+		return this.openai.uploads.complete(uploadId, body, options);
 	}
 
 	createPart(uploadId: string, createPartDto: CreatePartDto) {
-		return this.openai.uploads.parts.create(uploadId, createPartDto);
+		const {body, options}= createPartDto
+		return this.openai.uploads.parts.create(uploadId, body, options);
 	}
 }

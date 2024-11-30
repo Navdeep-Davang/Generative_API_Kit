@@ -1,6 +1,8 @@
 import { Controller, Post, Get, Patch, Delete, Body, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AssistantsService } from '../../services/beta/assistants.service'; // Assuming service exists
+import { AssistantCreateDto, AssistantListDto, AssistantUpdateDto } from '@/openai/dto/beta/assistants/assistants.dto';
+import { RequestOptionsDto } from '@/openai/dto/openai/RequestOptions/request-options.dto';
 
 @ApiTags('Beta - Assistants')
 @Controller('assistants')
@@ -11,17 +13,16 @@ export class AssistantsController {
     @ApiOperation({ summary: 'Create an assistant with a model and instructions' })
     @Post()
     createAssistant(
-      @Body() body: AssistantCreateParamsDto, // DTO for AssistantCreateParams
-      @Query() options?: CoreRequestOptionsDto, // DTO for RequestOptions
+      @Body() body: AssistantCreateDto
     ) {
-      return this.assistantsService.createAssistant(body, options);
+      return this.assistantsService.createAssistant(body);
     }
 
     @ApiOperation({ summary: 'Retrieve an assistant by ID' })
     @Get(':assistantId')
     retrieveAssistant(
       @Param('assistantId') assistantId: string,
-      @Query() options?: CoreRequestOptionsDto,
+      @Body() options?: RequestOptionsDto,
     ) {
       return this.assistantsService.retrieveAssistant(assistantId, options);
     }
@@ -30,26 +31,24 @@ export class AssistantsController {
     @Patch(':assistantId')
     updateAssistant(
       @Param('assistantId') assistantId: string,
-      @Body() body: AssistantUpdateParamsDto, // DTO for AssistantUpdateParams
-      @Query() options?: CoreRequestOptionsDto,
+      @Body() body: AssistantUpdateDto
     ) {
-      return this.assistantsService.updateAssistant(assistantId, body, options);
+      return this.assistantsService.updateAssistant(assistantId, body);
     }
 
     @ApiOperation({ summary: 'List all assistants' })
     @Get()
     listAssistants(
-      @Query() query?: AssistantListParamsDto, // DTO for AssistantListParams
-      @Query() options?: CoreRequestOptionsDto,
+      @Body() body: AssistantListDto
     ) {
-      return this.assistantsService.listAssistants(query, options);
+      return this.assistantsService.listAssistants(body);
     }
 
     @ApiOperation({ summary: 'Delete an assistant by ID' })
     @Delete(':assistantId')
     deleteAssistant(
       @Param('assistantId') assistantId: string,
-      @Query() options?: CoreRequestOptionsDto,
+      @Query() options?: RequestOptionsDto,
     ) {
       return this.assistantsService.deleteAssistant(assistantId, options);
     }

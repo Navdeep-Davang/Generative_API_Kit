@@ -6,10 +6,11 @@ import { CreateFileDto, ListFilesDto, WaitForProcessingDto } from '../dto/openai
 import { OpenAIService } from '../services/openai.service';
 import { RequestOptionsDto } from '../dto/openai/RequestOptions/request-options.dto';
 import { CreateImageVariationDto, EditImageDto, GenerateImageDto } from '../dto/openai/Images/images.dto';
-import { CreateModerationDto, CreateTranscriptionDto, CreateTranslationDto, GenerateSpeechDto } from '../dto/openai/Audio/audio.dto';
+import {  CreateTranscriptionDto, CreateTranslationDto, GenerateSpeechDto } from '../dto/openai/Audio/audio.dto';
 import { CreateFineTuningJobDto, ListFineTuningJobCheckpointsDto, ListFineTuningJobEventsDto, ListFineTuningJobsDto } from '../dto/openai/FineTuning/finetuning.dto';
 import { CreateBatchDto, ListBatchDto } from '../dto/openai/Batches/batches.dto';
-import { CreateUploadDto } from '../dto/openai/Uploads/uploads.dto';
+import { CompleteUploadDto, CreatePartDto, CreateUploadDto } from '../dto/openai/Uploads/uploads.dto';
+import { CreateModerationDto } from '../dto/openai/Moderations/moderations.dto';
 
 @Controller('openai')
 @ApiTags('OpenAI')
@@ -226,7 +227,10 @@ export class OpenAIController {
 
   @Post('batches/:batchId/cancel')
   @ApiOperation({ summary: 'Cancel an in-progress batch' })
-  async cancelBatch(@Param('batchId') batchId: string, @Body() options?: RequestOptionsDto) {
+  async cancelBatch(
+    @Param('batchId') batchId: string, @Body() 
+    options?: RequestOptionsDto
+  ) {
     return this.openAIService.cancelBatch(batchId, options);
   }
   
@@ -239,8 +243,11 @@ export class OpenAIController {
 
   @Post('uploads/:uploadId/cancel')
   @ApiOperation({ summary: 'Cancel an ongoing upload' })
-  async cancelUpload(@Param('uploadId') uploadId: string, @Body() body: CancelUploadDto) {
-    return this.openAIService.cancelUpload(uploadId, body);
+  async cancelUpload(
+    @Param('uploadId') uploadId: string, 
+    @Body()  options?: RequestOptionsDto
+  ) {
+    return this.openAIService.cancelUpload(uploadId, options);
   }
 
   @Post('uploads/:uploadId/complete')
