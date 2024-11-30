@@ -2,11 +2,14 @@ import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 import { ConfigService } from '@nestjs/config';
 import { CreateCompletionDto } from '../dto/openai/Completions/completions.dto';
-import { CompletionCreateParamsNonStreaming, CompletionCreateParamsStreaming } from 'openai/resources';
 import { CreateEmbeddingDto } from '../dto/openai/Embeddings/embeddings.dto';
 import { CreateFileDto, ListFilesDto, WaitForProcessingDto } from '../dto/openai/Files/files.dto';
 import { RequestOptionsDto } from '../dto/openai/RequestOptions/request-options.dto';
 import { CreateImageVariationDto, EditImageDto, GenerateImageDto } from '../dto/openai/Images/images.dto';
+import { CreateModerationDto, CreateTranscriptionDto, CreateTranslationDto, GenerateSpeechDto } from '../dto/openai/Audio/audio.dto';
+import { CreateFineTuningJobDto, ListFineTuningJobCheckpointsDto, ListFineTuningJobEventsDto, ListFineTuningJobsDto } from '../dto/openai/FineTuning/finetuning.dto';
+import { CreateBatchDto, ListBatchDto } from '../dto/openai/Batches/batches.dto';
+import { CreateUploadDto } from '../dto/openai/Uploads/uploads.dto';
 
 @Injectable()
 export class OpenAIService {
@@ -74,80 +77,91 @@ export class OpenAIService {
 
 // Audio 3 Services
 	createTranscription(createTranscriptionDto: CreateTranscriptionDto) {
-		return this.openai.audio.transcriptions.create(createTranscriptionDto);
+		const {body, options}= createTranscriptionDto
+		return this.openai.audio.transcriptions.create(body, options);
 	}
 
 	createTranslation(createTranslationDto: CreateTranslationDto) {
-		return this.openai.audio.translations.create(createTranslationDto);
+		const {body, options}= createTranslationDto
+		return this.openai.audio.translations.create(body, options);
 	}
 
 	generateSpeech(generateSpeechDto: GenerateSpeechDto) {
-		return this.openai.audio.speech.create(generateSpeechDto);
+		const {body, options}= generateSpeechDto
+		return this.openai.audio.speech.create(body, options);
 	}
 
 // Moderations 1 Service
 	createModeration(createModerationDto: CreateModerationDto) {
-		return this.openai.moderations.create(createModerationDto);
+		const {body, options}= createModerationDto
+		return this.openai.moderations.create(body, options);
 	}
 
 // Models 3 Services
-	retrieveModel(modelId: string) {
-		return this.openai.models.retrieve(modelId);
+	retrieveModel(modelId: string, options?:RequestOptionsDto) {
+		return this.openai.models.retrieve(modelId, options);
 	}
 
-	listModels() {
-		return this.openai.models.list();
+	listModels(options?:RequestOptionsDto) {
+		return this.openai.models.list(options);
 	}
 
-	deleteModel(modelId: string) {
-		return this.openai.models.del(modelId);
+	deleteModel(modelId: string, options?:RequestOptionsDto) {
+		return this.openai.models.del(modelId, options);
 	}
 
   // Fine-tuning Jobs 6 Services
 	createFineTuningJob(createFineTuningJobDto: CreateFineTuningJobDto) {
-		return this.openai.fineTuning.jobs.create(createFineTuningJobDto);
+		const {body, options}= createFineTuningJobDto
+		return this.openai.fineTuning.jobs.create(body, options);
 	}
 
-	retrieveFineTuningJob(jobId: string) {
-		return this.openai.fineTuning.jobs.retrieve(jobId);
+	retrieveFineTuningJob(jobId: string, options?:RequestOptionsDto) {
+		return this.openai.fineTuning.jobs.retrieve(jobId, options);
 	}
 
-	listFineTuningJobs(query: ListFineTuningJobsDto) {
-		return this.openai.fineTuning.jobs.list(query);
+	listFineTuningJobs(listFineTuningJobsDto: ListFineTuningJobsDto) {
+		const {query, options}= listFineTuningJobsDto
+		return this.openai.fineTuning.jobs.list(query, options);
 	}
 
-	cancelFineTuningJob(jobId: string) {
-		return this.openai.fineTuning.jobs.cancel(jobId);
+	cancelFineTuningJob(jobId: string, options?:RequestOptionsDto) {
+		return this.openai.fineTuning.jobs.cancel(jobId, options);
 	}
 
-	listFineTuningJobEvents(jobId: string, query: ListFineTuningJobEventsDto) {
-		return this.openai.fineTuning.jobs.listEvents(jobId, query);
+	listFineTuningJobEvents(jobId: string, listFineTuningJobEventsDto: ListFineTuningJobEventsDto) {
+		const {query, options}= listFineTuningJobEventsDto
+		return this.openai.fineTuning.jobs.listEvents(jobId, query, options);
 	}
 
-	listFineTuningJobCheckpoints(jobId: string, query: ListFineTuningJobCheckpointsDto) {
-		return this.openai.fineTuning.jobs.checkpoints.list(jobId, query);
+	listFineTuningJobCheckpoints(jobId: string, listFineTuningJobCheckpointsDto: ListFineTuningJobCheckpointsDto) {
+		const {query, options}= listFineTuningJobCheckpointsDto
+		return this.openai.fineTuning.jobs.checkpoints.list(jobId, query, options);
 	}
 
   // Batches 4 Services
 	createBatch(createBatchDto: CreateBatchDto) {
-		return this.openai.batches.create(createBatchDto);
+		const {body, options}= createBatchDto
+		return this.openai.batches.create(body, options);
 	}
 
-	retrieveBatch(batchId: string) {
-		return this.openai.batches.retrieve(batchId);
+	retrieveBatch(batchId: string, options?:RequestOptionsDto) {
+		return this.openai.batches.retrieve(batchId, options);
 	}
 
-	listBatches(query: ListBatchDto) {
-		return this.openai.batches.list(query);
+	listBatches(listBatchDto: ListBatchDto) {
+		const {query, options}= listBatchDto
+		return this.openai.batches.list(query, options);
 	}
 
-	cancelBatch(batchId: string, cancelBatchDto: CancelBatchDto) {
-		return this.openai.batches.cancel(batchId, cancelBatchDto);
+	cancelBatch(batchId: string, options?:RequestOptionsDto) {
+		return this.openai.batches.cancel(batchId, options);
 	}
 
   // Uploads 4 Services
 	createUpload(createUploadDto: CreateUploadDto) {
-		return this.openai.uploads.create(createUploadDto);
+		const {body, options}= createUploadDto
+		return this.openai.uploads.create(body, options);
 	}
 
 	cancelUpload(uploadId: string, cancelUploadDto: CancelUploadDto) {

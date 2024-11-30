@@ -5,6 +5,11 @@ import { CreateEmbeddingDto } from '../dto/openai/Embeddings/embeddings.dto';
 import { CreateFileDto, ListFilesDto, WaitForProcessingDto } from '../dto/openai/Files/files.dto';
 import { OpenAIService } from '../services/openai.service';
 import { RequestOptionsDto } from '../dto/openai/RequestOptions/request-options.dto';
+import { CreateImageVariationDto, EditImageDto, GenerateImageDto } from '../dto/openai/Images/images.dto';
+import { CreateModerationDto, CreateTranscriptionDto, CreateTranslationDto, GenerateSpeechDto } from '../dto/openai/Audio/audio.dto';
+import { CreateFineTuningJobDto, ListFineTuningJobCheckpointsDto, ListFineTuningJobEventsDto, ListFineTuningJobsDto } from '../dto/openai/FineTuning/finetuning.dto';
+import { CreateBatchDto, ListBatchDto } from '../dto/openai/Batches/batches.dto';
+import { CreateUploadDto } from '../dto/openai/Uploads/uploads.dto';
 
 @Controller('openai')
 @ApiTags('OpenAI')
@@ -81,17 +86,19 @@ export class OpenAIController {
     return this.openAIService.createImageVariation(body);
   }
 
+  @Post('images/edit')
+  @ApiOperation({ summary: 'Edit an image based on input prompts' })
+  async editImage(@Body() body: EditImageDto) {
+    return this.openAIService.editImage(body);
+  }
+
   @Post('images/generate')
   @ApiOperation({ summary: 'Generate an image from a text prompt' })
   async generateImage(@Body() body: GenerateImageDto) {
     return this.openAIService.generateImage(body);
   }
 
-  @Post('images/edit')
-  @ApiOperation({ summary: 'Edit an image based on input prompts' })
-  async editImage(@Body() body: EditImageDto) {
-    return this.openAIService.editImage(body);
-  }
+
 
 // Audio 3 Endpoints 
   @Post('audio/transcriptions')
@@ -123,20 +130,26 @@ export class OpenAIController {
 // Model 3 Endpoints
   @Get('models/:modelId')
   @ApiOperation({ summary: 'Retrieve information about a specific model' })
-  async retrieveModel(@Param('modelId') modelId: string) {
-    return this.openAIService.retrieveModel(modelId);
+  async retrieveModel(
+    @Param('modelId') modelId: string,
+    @Body() options?: RequestOptionsDto
+  ) {
+    return this.openAIService.retrieveModel(modelId, options);
   }
   
   @Get('models')
   @ApiOperation({ summary: 'List all available models' })
-  async listModels() {
-    return this.openAIService.listModels();
+  async listModels(@Body() options?: RequestOptionsDto) {
+    return this.openAIService.listModels(options);
   }
   
   @Delete('models/:modelId')
   @ApiOperation({ summary: 'Delete a fine-tuned model' })
-  async deleteModel(@Param('modelId') modelId: string) {
-    return this.openAIService.deleteModel(modelId);
+  async deleteModel(
+    @Param('modelId') modelId: string,
+    @Body() options?: RequestOptionsDto
+  ) {
+    return this.openAIService.deleteModel(modelId, options);
   }
   
 
@@ -149,8 +162,11 @@ export class OpenAIController {
   
   @Get('fine-tuning/jobs/:jobId')
   @ApiOperation({ summary: 'Retrieve information about a fine-tuning job' })
-  async retrieveFineTuningJob(@Param('jobId') jobId: string) {
-    return this.openAIService.retrieveFineTuningJob(jobId);
+  async retrieveFineTuningJob(
+    @Param('jobId') jobId: string,
+    @Body() options?: RequestOptionsDto
+  ) {
+    return this.openAIService.retrieveFineTuningJob(jobId, options);
   }
   
   @Get('fine-tuning/jobs')
@@ -161,17 +177,20 @@ export class OpenAIController {
   
   @Post('fine-tuning/jobs/:jobId/cancel')
   @ApiOperation({ summary: 'Cancel a fine-tuning job' })
-  async cancelFineTuningJob(@Param('jobId') jobId: string) {
-    return this.openAIService.cancelFineTuningJob(jobId);
+  async cancelFineTuningJob(
+    @Param('jobId') jobId: string,
+    @Body() options?: RequestOptionsDto
+  ) {
+    return this.openAIService.cancelFineTuningJob(jobId, options);
   }
   
   @Get('fine-tuning/jobs/:jobId/events')
   @ApiOperation({ summary: 'List events for a fine-tuning job' })
   async listFineTuningJobEvents(
     @Param('jobId') jobId: string,
-    @Query() query: ListFineTuningJobEventsDto,
+    @Body() body: ListFineTuningJobEventsDto,
   ) {
-    return this.openAIService.listFineTuningJobEvents(jobId, query);
+    return this.openAIService.listFineTuningJobEvents(jobId, body);
   }
   
   @Get('fine-tuning/jobs/:jobId/checkpoints')
@@ -192,8 +211,11 @@ export class OpenAIController {
 
   @Get('batches/:batchId')
   @ApiOperation({ summary: 'Retrieve a batch by ID' })
-  async getBatch(@Param('batchId') batchId: string) {
-    return this.openAIService.retrieveBatch(batchId);
+  async getBatch(
+    @Param('batchId') batchId: string,
+    @Body() options?: RequestOptionsDto
+  ) {
+    return this.openAIService.retrieveBatch(batchId, options);
   }
 
   @Get('batches')
@@ -204,8 +226,8 @@ export class OpenAIController {
 
   @Post('batches/:batchId/cancel')
   @ApiOperation({ summary: 'Cancel an in-progress batch' })
-  async cancelBatch(@Param('batchId') batchId: string, @Body() body: CancelBatchDto) {
-    return this.openAIService.cancelBatch(batchId, body);
+  async cancelBatch(@Param('batchId') batchId: string, @Body() options?: RequestOptionsDto) {
+    return this.openAIService.cancelBatch(batchId, options);
   }
   
 // Uploads 4 Endpoint
