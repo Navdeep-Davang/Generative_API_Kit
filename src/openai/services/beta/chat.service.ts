@@ -23,8 +23,9 @@ export class ChatService {
   }
 
   // Running tools for a chat completion
-  runTools(runToolsDto: RunToolsDto, options?: RunnerOptionsDto) {
-    return this.chat.completions.runTools(runToolsDto, options);
+  runTools(runToolsDto: RunToolsDto) {
+    const {body, options}= runToolsDto
+    return this.chat.completions.runTools(body, options);
   }
 
   // Streaming chat completion
