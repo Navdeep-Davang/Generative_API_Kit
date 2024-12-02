@@ -40,28 +40,14 @@ const RunnableToolFunctionSchema = <Args extends object | string>(
     // Case 1: Args is string (RunnableToolFunctionWithoutParse)
     z.object({
       type: z.literal('function'),
-      function: RunnableFunctionWithoutParseSchema.shape.function,
-    }).extend({
-      parameters: RunnableFunctionWithoutParseSchema.shape.parameters,
-      description: RunnableFunctionWithoutParseSchema.shape.description,
-      name: RunnableFunctionWithoutParseSchema.shape.name.optional(),
-      strict: RunnableFunctionWithoutParseSchema.shape.strict.optional(),
-    }),
+      function: RunnableFunctionWithoutParseSchema,
+    }).strict(),  // Ensures the object is strictly validated with no extra properties
 
     // Case 2: Args is an object (RunnableToolFunctionWithParse)
     z.object({
       type: z.literal('function'),
-      function: RunnableFunctionWithParseSchema(argsSchema).shape.function,
-    }).extend({
-      parse: RunnableFunctionWithParseSchema(argsSchema).shape.parse,
-      parameters: RunnableFunctionWithParseSchema(argsSchema).shape.parameters,
-      description: RunnableFunctionWithParseSchema(argsSchema).shape.description,
-      name: RunnableFunctionWithParseSchema(argsSchema).shape.name.optional(),
-      strict: RunnableFunctionWithParseSchema(argsSchema).shape.strict.optional(),
-    }),
-
-    // Never to ensure both schemas are satisfied
-    z.never(),
+      function: RunnableFunctionWithParseSchema(argsSchema),
+    }).strict(),  // Ensures the object is strictly validated with no extra properties
   ]) satisfies z.ZodType<RunnableToolFunction<Args>>;
 
 
