@@ -2,9 +2,9 @@ import { z } from "zod";
 import { ChatCompletionCreateParamsNonStreamingSchema } from "./ChatCompletionCreateParamsNonStreamingSchema";
 import { AutoParseableToolSchema } from "./AutoParseableToolSchema";
 import { RunnableToolsSchema } from "./RunnableToolsSchema";
-import { ChatCompletionCreateParamsStreamingSchema } from "./ChatCompletionCreateParamsStreamingSchema";
 import { ChatCompletionStreamingToolRunnerParams } from "openai/lib/ChatCompletionStreamingRunner";
 import { ChatCompletionToolRunnerParams } from "openai/lib/ChatCompletionRunner";
+import { ChatCompletionCreateParamsStreamingSchema } from "./ChatCompletionCreateParamsStreamingSchema";
 
 
 export const ChatCompletionToolRunnerParams$inboundSchema = z.object({

@@ -1,6 +1,7 @@
 import { Controller, Post, Body, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ChatService } from '../../services/beta/chat.service'; // Assuming the service exists
+import { ParseChatCompletionDto, RunToolsDto, StreamChatCompletionDto } from '@/openai/dto/beta/chat/chat.dto';
 
 @ApiTags('Beta - Chat')
 @Controller('beta/chat')
@@ -11,27 +12,24 @@ export class ChatController {
     @ApiOperation({ summary: 'Parse a chat completion' })
     @Post('completions/parse')
     parseChatCompletion(
-        @Body() body: ParseChatCompletionDto, // Unique DTO for parsing chat completion
-        @Query() options?: CoreRequestOptionsDto, // DTO for RequestOptions
+        @Body() body: ParseChatCompletionDto, 
     ) {
-        return this.chatService.parseChatCompletion(body, options);
+        return this.chatService.parseChatCompletion(body);
     }
 
     @ApiOperation({ summary: 'Run tools for chat completion' })
     @Post('completions/run-tools')
     runTools(
-        @Body() body: RunToolsDto, // DTO for ChatCompletionToolRunnerParams
-        @Query() options?: RunnerOptionsDto, // DTO for RunnerOptions
+        @Body() body: RunToolsDto,
     ) {
-        return this.chatService.runTools(body, options);
+        return this.chatService.runTools(body);
     }
 
     @ApiOperation({ summary: 'Stream a chat completion' })
     @Post('completions/stream')
     streamChatCompletion(
-        @Body() body: StreamChatCompletionDto, // DTO for ChatCompletionStreamParams
-        @Query() options?: CoreRequestOptionsDto,
+        @Body() body: StreamChatCompletionDto
     ) {
-        return this.chatService.streamChatCompletion(body, options);
+        return this.chatService.streamChatCompletion(body);
     }
 }

@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { RequestOptionsSchema } from '../RequestOptions/schema/RequestOptionsSchema';
 import {
-  CompletionCreateParamsBase$inboundSchema,
   CompletionCreateParamsNonStreaming$inboundSchema,
   CompletionCreateParamsStreaming$inboundSchema,
 } from './schema/CompletionsSchema';

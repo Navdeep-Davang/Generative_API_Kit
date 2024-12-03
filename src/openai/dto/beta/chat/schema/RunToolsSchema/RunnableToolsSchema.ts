@@ -1,5 +1,5 @@
 import { BaseFunctionsArgs, RunnableTools } from "openai/lib/RunnableFunction";
-import { z, ZodType } from "zod";  // Ensure ZodType is imported
+import { z } from "zod";  // Ensure ZodType is imported
 import { RunnableToolFunctionSchema } from "./RunnableToolFunctionSchema";
 
 export const RunnableToolsSchema = z.union([

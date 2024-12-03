@@ -1,7 +1,6 @@
 import { z } from 'zod';
-import { JSONSchema } from './JSONSchema';
 import {  RunnableToolFunction } from 'openai/lib/RunnableFunction';
-
+import { JSONSchema } from './JSONSchema';
 
 // Define the function schema
 const functionSchema = z.object({

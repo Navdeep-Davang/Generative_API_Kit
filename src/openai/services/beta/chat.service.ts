@@ -1,10 +1,10 @@
-import { ParseChatCompletionDto, RunToolsDto } from '@/openai/dto/beta/chat/chat.dto';
+import { ParseChatCompletionDto, RunToolsDto, StreamChatCompletionDto } from '@/openai/dto/beta/chat/chat.dto';
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 import { ChatCompletionToolRunnerParams } from 'openai/lib/ChatCompletionRunner';
 import { ChatCompletionStreamingToolRunnerParams } from 'openai/lib/ChatCompletionStreamingRunner';
 import { Beta } from 'openai/resources'; // Assuming Beta is the SDK resource for chat completions
-
+ 
 @Injectable()
 export class ChatService {
   private openAIClient: OpenAI;
@@ -38,7 +38,8 @@ export class ChatService {
   }
 
   // Streaming chat completion
-  streamChatCompletion(streamChatCompletionDto: StreamChatCompletionDto, options?: CoreRequestOptionsDto) {
-    return this.chat.completions.stream(streamChatCompletionDto, options);
+  streamChatCompletion(streamChatCompletionDto: StreamChatCompletionDto) {
+    const {body, options}= streamChatCompletionDto
+    return this.chat.completions.stream(body, options);
   }
 }
