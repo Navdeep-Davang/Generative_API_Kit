@@ -1,5 +1,6 @@
 import { ParseChatCompletionDto, RunToolsDto, StreamChatCompletionDto } from '@/openai/dto/beta/chat/chat.dto';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 import { ChatCompletionToolRunnerParams } from 'openai/lib/ChatCompletionRunner';
 import { ChatCompletionStreamingToolRunnerParams } from 'openai/lib/ChatCompletionStreamingRunner';
@@ -10,9 +11,9 @@ export class ChatService {
   private openAIClient: OpenAI;
   private readonly chat;
 
-  constructor() {
+  constructor(private configService: ConfigService) {
     this.openAIClient = new OpenAI({
-      apiKey: 'your-api-key', // Use environment variables for API key or configuration
+        apiKey: this.configService.get<string>('OPENAI_API_KEY')
     });
 
     this.chat = new Beta(this.openAIClient).chat;

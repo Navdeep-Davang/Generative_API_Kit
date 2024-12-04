@@ -1,6 +1,7 @@
-import { RunCreateDto, ThreadCreateAndRunDto, ThreadCreateAndRunPollDto, ThreadCreateAndRunStreamDto, ThreadCreateDto, ThreadUpdateDto } from '@/openai/dto/beta/threads/threads.dto';
+import { ExtendedRequestOptionsDto, ListRunParamsDto, MessageCreateDto, MessageListQueryDto, MessageUpdateDto, RunCreateAndPollDto, RunCreateDto, RunStreamDto, RunSubmitToolOutputsDto, RunSubmitToolOutputsPollDto, RunSubmitToolOutputsStreamDto, RunUpdateDto, StepListQueryDto, StepRetrieveQueryDto, ThreadCreateAndRunDto, ThreadCreateAndRunPollDto, ThreadCreateAndRunStreamDto, ThreadCreateDto, ThreadUpdateDto } from '@/openai/dto/beta/threads/threads.dto';
 import { RequestOptionsDto } from '@/openai/dto/openai/RequestOptions/request-options.dto';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 import { Beta } from 'openai/resources';
 
@@ -9,9 +10,9 @@ export class ThreadsService {
   private openAIClient: OpenAI;
   private readonly threads;
 
-  constructor() {
+  constructor(private configService: ConfigService) {
     this.openAIClient = new OpenAI({
-      apiKey: 'your-api-key', // Use environment variables for API key or configuration
+        apiKey: this.configService.get<string>('OPENAI_API_KEY')
     });
 
     this.threads = new Beta(this.openAIClient).threads;
@@ -63,68 +64,80 @@ export class ThreadsService {
         }
 
         updateRunForThread(threadId: string, runId: string, runUpdateDto: RunUpdateDto) {
-            return this.threads.runs.update(threadId, runId, runUpdateDto);
+            const {body, options}= runUpdateDto
+            return this.threads.runs.update(threadId, runId, body, options);
         }
 
-        listRunsForThread(threadId: string, query: RunListParamsDto) {
-            return this.threads.runs.list(threadId, query);
+        listRunsForThread(threadId: string, listRunParamsDto: ListRunParamsDto) {
+            const {query, options}= listRunParamsDto
+            return this.threads.runs.list(threadId, query, options);
         }
 
-        cancelRunForThread(threadId: string, runId: string) {
-            return this.threads.runs.cancel(threadId, runId);
+        cancelRunForThread(threadId: string, runId: string, options?:RequestOptionsDto) {
+            return this.threads.runs.cancel(threadId, runId, options);
         }
 
         createAndPollRunForThread(threadId: string, runCreateAndPollDto: RunCreateAndPollDto) {
-            return this.threads.runs.createAndPoll(threadId, runCreateAndPollDto);
+            const {body, options}= runCreateAndPollDto
+            return this.threads.runs.createAndPoll(threadId, body, options);
         }
 
-        pollRunForThread(threadId: string, runId: string, options: { pollIntervalMs?: number }) {
+        pollRunForThread(threadId: string, runId: string, options?: ExtendedRequestOptionsDto) {
             return this.threads.runs.poll(threadId, runId, options);
         }
 
         streamRunForThread(threadId: string, runStreamDto: RunStreamDto) {
-            return this.threads.runs.stream(threadId, runStreamDto);
+            const {body, options}= runStreamDto
+            return this.threads.runs.stream(threadId, body, options);
         }
 
         submitToolOutputsForRun(threadId: string, runId: string, toolOutputsDto: RunSubmitToolOutputsDto) {
-            return this.threads.runs.submitToolOutputs(threadId, runId, toolOutputsDto);
+            const {body, options}= toolOutputsDto
+            return this.threads.runs.submitToolOutputs(threadId, runId, body, options);
         }
 
         submitToolOutputsAndPollForRun(threadId: string, runId: string, toolOutputsPollDto: RunSubmitToolOutputsPollDto) {
-            return this.threads.runs.submitToolOutputsAndPoll(threadId, runId, toolOutputsPollDto);
+            const {body, options}= toolOutputsPollDto
+            return this.threads.runs.submitToolOutputsAndPoll(threadId, runId, body, options);
         }
 
         submitToolOutputsStreamForRun(threadId: string, runId: string, toolOutputsStreamDto: RunSubmitToolOutputsStreamDto) {
-            return this.threads.runs.submitToolOutputsStream(threadId, runId, toolOutputsStreamDto);
+            const {body, options}= toolOutputsStreamDto
+            return this.threads.runs.submitToolOutputsStream(threadId, runId, body, options);
         }
 
         // Steps 2 Services
-            retrieveRunStepForThread(threadId: string, runId: string, stepId: string, query?: StepRetrieveQueryDto) {
-                return this.threads.runs.steps.retrieve(threadId, runId, stepId, query);
+            retrieveRunStepForThread(threadId: string, runId: string, stepId: string, stepRetrieveQueryDto: StepRetrieveQueryDto) {
+                const {query, options}= stepRetrieveQueryDto
+                return this.threads.runs.steps.retrieve(threadId, runId, stepId, query, options);
             }
 
-            listRunStepsForThread(threadId: string, runId: string, query?: StepListQueryDto) {
-                return this.threads.runs.steps.list(threadId, runId, query);
+            listRunStepsForThread(threadId: string, runId: string, stepListQueryDto: StepListQueryDto) {
+                const {query, options}= stepListQueryDto
+                return this.threads.runs.steps.list(threadId, runId, query, options);
             }
 
     // Messages 5 Services
         createMessageForThread(threadId: string, messageCreateDto: MessageCreateDto) {
-            return this.threads.messages.create(threadId, messageCreateDto);
+            const {body, options}= messageCreateDto
+            return this.threads.messages.create(threadId, body, options);
         }
 
-        retrieveMessageForThread(threadId: string, messageId: string) {
-            return this.threads.messages.retrieve(threadId, messageId);
+        retrieveMessageForThread(threadId: string, messageId: string, options?:RequestOptionsDto) {
+            return this.threads.messages.retrieve(threadId, messageId, options);
         }
 
         updateMessageForThread(threadId: string, messageId: string, messageUpdateDto: MessageUpdateDto) {
-            return this.threads.messages.update(threadId, messageId, messageUpdateDto);
+            const {body, options}= messageUpdateDto
+            return this.threads.messages.update(threadId, messageId, body, options);
         }
 
-        listMessagesForThread(threadId: string, query?: MessageListQueryDto) {
-            return this.threads.messages.list(threadId, query);
+        listMessagesForThread(threadId: string, messageListQueryDto: MessageListQueryDto) {
+            const {query, options}= messageListQueryDto
+            return this.threads.messages.list(threadId, query, options);
         }
 
-        deleteMessageForThread(threadId: string, messageId: string) {
-            return this.threads.messages.del(threadId, messageId);
+        deleteMessageForThread(threadId: string, messageId: string, options?:RequestOptionsDto) {
+            return this.threads.messages.del(threadId, messageId, options);
         }
 }

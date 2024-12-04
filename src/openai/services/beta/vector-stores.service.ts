@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 import { Beta } from 'openai/resources';
 
@@ -7,11 +8,11 @@ export class VectorStoresService {
     private openAIClient: OpenAI;
     private readonly vectorStores;
   
-    constructor() {    
-      this.openAIClient = new OpenAI({
-        apiKey: 'your-api-key', // Use environment variables for API key or configuration
-      });
-      
+    constructor(private configService: ConfigService) {
+        this.openAIClient = new OpenAI({
+            apiKey: this.configService.get<string>('OPENAI_API_KEY')
+        });
+
       this.vectorStores = new Beta(this.openAIClient).vectorStores;
     }
 
