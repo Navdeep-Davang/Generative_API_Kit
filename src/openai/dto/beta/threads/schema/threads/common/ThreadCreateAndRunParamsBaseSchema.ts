@@ -1,9 +1,9 @@
 import { ChatGPTModelSchema } from "@/openai/dto/common/ChatModelSchema";
 import { z } from "zod";
-import { AssistantResponseFormatOptionSchema } from "./AssistantResponseFormatOptionSchema";
-import { ThreadSchema } from "./ThreadSchema";
+import { AssistantResponseFormatOptionSchema } from "../ThreadCreateAndRunSchema/AssistantResponseFormatOptionSchema";
+import { ThreadSchema } from "../ThreadCreateAndRunSchema/ThreadSchema";
 import { ThreadCreateAndRunParamsBase } from "openai/resources/beta/threads/threads";
-import { ToolChoiceSchema } from "./ToolChoiceSchema";
+import { ToolChoiceSchema } from "../ThreadCreateAndRunSchema/ToolChoiceSchema";
 import { AssistantToolSchema } from "../../../../assistants/schema/AssistantCreateSchema";
 
 export const ThreadCreateAndRunParamsBaseSchema = z.object({

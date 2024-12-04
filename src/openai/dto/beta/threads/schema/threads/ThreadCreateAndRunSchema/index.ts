@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { ThreadCreateAndRunParamsBaseSchema } from "./ThreadCreateAndRunParamsBaseSchema";
+import { ThreadCreateAndRunParamsBaseSchema } from "../common/ThreadCreateAndRunParamsBaseSchema";
 
 export const ThreadCreateAndRunParamsNonStreaming$inboundSchema = ThreadCreateAndRunParamsBaseSchema.extend({
-    stream: z.boolean().nullable().optional(),
+    stream: z.union([z.literal(false), z.null()]).optional(),
 });
 
 export const ThreadCreateAndRunParamsStreaming$inboundSchema = ThreadCreateAndRunParamsBaseSchema.extend({
