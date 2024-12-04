@@ -1,10 +1,10 @@
 import { ChatGPTModelSchema } from "@/openai/dto/common/ChatModelSchema";
 import { z } from "zod";
-import { AssistantResponseFormatOptionSchema } from "../ThreadCreateAndRunSchema/AssistantResponseFormatOptionSchema";
+import { AssistantResponseFormatOptionSchema } from "./AssistantResponseFormatOptionSchema";
 import { ThreadSchema } from "../ThreadCreateAndRunSchema/ThreadSchema";
 import { ThreadCreateAndRunParamsBase } from "openai/resources/beta/threads/threads";
-import { ToolChoiceSchema } from "../ThreadCreateAndRunSchema/ToolChoiceSchema";
-import { AssistantToolSchema } from "../../../../assistants/schema/AssistantCreateSchema";
+import { AssistantToolSchema } from "@/openai/dto/beta/assistants/schema/common/AssistantToolSchema";
+import { AssistantToolChoiceOptionSchema } from "./AssistantToolChoiceOptionSchema";
 
 export const ThreadCreateAndRunParamsBaseSchema = z.object({
   assistant_id: z.string().min(1, 'Assistant ID is required'),
@@ -32,7 +32,7 @@ export const ThreadCreateAndRunParamsBaseSchema = z.object({
 
   thread: ThreadSchema.optional(),
 
-  tool_choice: ToolChoiceSchema.nullable().optional(),
+  tool_choice: AssistantToolChoiceOptionSchema.nullable().optional(),
 
   tool_resources: z.object({
     code_interpreter: z.object({

@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import {  AssistantToolSchema } from './AssistantCreateSchema';
-import { AssistantResponseFormatOptionSchema } from '../../threads/schema/threads/ThreadCreateAndRunSchema/AssistantResponseFormatOptionSchema';
+import { AssistantResponseFormatOptionSchema } from '../../threads/schema/threads/common/AssistantResponseFormatOptionSchema';
+import { AssistantToolSchema } from './common/AssistantToolSchema';
 
 
 export const AssistantUpdateParams$inboundSchema = z.object({

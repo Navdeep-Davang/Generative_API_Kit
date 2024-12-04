@@ -4,7 +4,10 @@ import { ThreadCreateParams$inboundSchema } from "./schema/threads/ThreadCreateP
 import { createZodDto } from "nestjs-zod";
 import { ThreadUpdateParams$inboundSchema } from "./schema/threads/ThreadUpdateSchema";
 import { ThreadCreateAndRunParamsNonStreaming$inboundSchema, ThreadCreateAndRunParamsStreaming$inboundSchema } from "./schema/threads/ThreadCreateAndRunSchema";
+import { RunCreateParamsNonStreaming$inboundSchema, RunCreateParamsStreaming$inboundSchema } from "./schema/runs/RunCreateSchema";
 
+
+// Threads Services
 export const ThreadCreateSchema = z.object({
     body: ThreadCreateParams$inboundSchema,
     options: RequestOptionsSchema().optional(),
@@ -35,8 +38,20 @@ export const ThreadCreateAndRunStreamSchema = z.object({
     options: RequestOptionsSchema().optional(),
 });
 
+// Runs Services
+export const RunCreateSchema = z.object({
+    params: z.union([
+        RunCreateParamsNonStreaming$inboundSchema, // Union with ThreadCreateAndRunParamsNonStreaming schema
+        RunCreateParamsStreaming$inboundSchema,    // Union with ThreadCreateAndRunParamsStreaming schema
+    ]),
+    options: RequestOptionsSchema().optional(), // options is optional and follows the RequestOptions schema
+});
+
+
 export class ThreadCreateDto extends createZodDto(ThreadCreateSchema) {}
 export class ThreadUpdateDto extends createZodDto(ThreadUpdateSchema) {}
 export class ThreadCreateAndRunDto extends createZodDto(ThreadCreateAndRunSchema) {}
 export class ThreadCreateAndRunPollDto extends createZodDto(ThreadCreateAndRunPollSchema) {}
 export class ThreadCreateAndRunStreamDto extends createZodDto(ThreadCreateAndRunStreamSchema) {}
+
+export class RunCreateDto extends createZodDto(RunCreateSchema) {}

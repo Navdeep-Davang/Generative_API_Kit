@@ -1,4 +1,4 @@
-import { ThreadCreateAndRunDto, ThreadCreateAndRunPollDto, ThreadCreateAndRunStreamDto, ThreadCreateDto, ThreadUpdateDto } from '@/openai/dto/beta/threads/threads.dto';
+import { RunCreateDto, ThreadCreateAndRunDto, ThreadCreateAndRunPollDto, ThreadCreateAndRunStreamDto, ThreadCreateDto, ThreadUpdateDto } from '@/openai/dto/beta/threads/threads.dto';
 import { RequestOptionsDto } from '@/openai/dto/openai/RequestOptions/request-options.dto';
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
@@ -54,11 +54,12 @@ export class ThreadsService {
 
     // Runs 11 Services
         createRunForThread(threadId: string, runCreateDto: RunCreateDto) {
-            return this.threads.runs.create(threadId, runCreateDto);
+            const {params, options}= runCreateDto
+            return this.threads.runs.create(threadId, params, options);
         }
 
-        retrieveRunForThread(threadId: string, runId: string) {
-            return this.threads.runs.retrieve(threadId, runId);
+        retrieveRunForThread(threadId: string, runId: string, options?:RequestOptionsDto) {
+            return this.threads.runs.retrieve(threadId, runId, options);
         }
 
         updateRunForThread(threadId: string, runId: string, runUpdateDto: RunUpdateDto) {

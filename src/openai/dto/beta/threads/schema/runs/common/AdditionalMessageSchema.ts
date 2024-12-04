@@ -1,0 +1,31 @@
+import { z } from "zod";
+import { MessageContentPartParamSchema } from "../../messages/common/MessageContentPartParamSchema";
+
+export const AdditionalMessageSchema = z.object({
+  content: z.union([
+    z.string(),
+    z.array(MessageContentPartParamSchema)
+  ]),
+
+  role: z.enum(['user', 'assistant']),
+
+  attachments: z
+    .array(
+      z.object({
+        file_id: z.string().optional(),
+
+        tools: z
+          .array(
+            z.union([
+              z.object({ type: z.literal('code_interpreter') }),
+              z.object({ type: z.literal('file_search') })
+            ])
+          )
+          .optional(),
+      })
+    )
+    .nullable()
+    .optional(),
+
+  metadata: z.unknown().nullable().optional(),
+});

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MessageContentPartParamSchema } from "../../messages/MessageContentPartParamSchema";
+import { MessageContentPartParamSchema } from "../../messages/common/MessageContentPartParamSchema";
 
 export const MessageSchema = z.object({
     content: z.union([z.string(), z.array(MessageContentPartParamSchema)]),
