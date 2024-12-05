@@ -12,7 +12,7 @@ export class AssistantsController {
 // Assistants 5 Endpoints
     @ApiOperation({ summary: 'Create an assistant with a model and instructions' })
     @Post()
-    createAssistant(
+    async createAssistant(
       @Body() body: AssistantCreateDto
     ) {
       return this.assistantsService.createAssistant(body);
@@ -20,7 +20,7 @@ export class AssistantsController {
 
     @ApiOperation({ summary: 'Retrieve an assistant by ID' })
     @Get(':assistantId')
-    retrieveAssistant(
+    async retrieveAssistant(
       @Param('assistantId') assistantId: string,
       @Body() options?: RequestOptionsDto,
     ) {
@@ -29,7 +29,7 @@ export class AssistantsController {
 
     @ApiOperation({ summary: 'Update an assistant by ID' })
     @Patch(':assistantId')
-    updateAssistant(
+    async updateAssistant(
       @Param('assistantId') assistantId: string,
       @Body() body: AssistantUpdateDto
     ) {
@@ -38,7 +38,7 @@ export class AssistantsController {
 
     @ApiOperation({ summary: 'List all assistants' })
     @Get()
-    listAssistants(
+    async listAssistants(
       @Body() body: AssistantListDto
     ) {
       return this.assistantsService.listAssistants(body);
@@ -46,9 +46,9 @@ export class AssistantsController {
 
     @ApiOperation({ summary: 'Delete an assistant by ID' })
     @Delete(':assistantId')
-    deleteAssistant(
+    async deleteAssistant(
       @Param('assistantId') assistantId: string,
-      @Query() options?: RequestOptionsDto,
+      @Body() options?: RequestOptionsDto,
     ) {
       return this.assistantsService.deleteAssistant(assistantId, options);
     }

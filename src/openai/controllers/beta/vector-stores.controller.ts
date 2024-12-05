@@ -1,7 +1,9 @@
+import { ExtendedRequestOptionsDto } from '@/openai/dto/beta/threads/threads.dto';
+import { CreateFileBatchDto, CreateVectorStoreDto, CreateVectorStoreFileDto, FileBatchCreateAndPollDto, FileCreateAndPollDto, ListFilesInFileBatchDto, ListVectorStoreFilesDto, ListVectorStoresDto, UpdateVectorStoreDto, UploadFileAndPollDto, UploadFileBatchDto, UploadFileDto } from '@/openai/dto/beta/vector-stores/vector-stores.dto';
+import { RequestOptionsDto } from '@/openai/dto/openai/RequestOptions/request-options.dto';
+import { VectorStoresService } from '@/openai/services/beta/vector-stores.service';
 import { Controller, Post, Body, Param, Get, Query, Delete } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { VectorStoresService } from '../../services/beta/beta.service'; // Adjust path if necessary
- 
 
 @ApiTags('Beta - Vector Stores')
 @Controller('beta/vector-stores')
@@ -12,109 +14,117 @@ export class VectorStoresController {
 // VectorStores 5 Endpoints 
     @ApiOperation({ summary: 'Create a vector store' })
     @Post()
-    createVectorStore(@Body() createVectorStoreDto: CreateVectorStoreDto) {
-        return this.VectorStoresService.createVectorStore(createVectorStoreDto);
+    async createVectorStore(@Body() body: CreateVectorStoreDto) {
+        return this.VectorStoresService.createVectorStore(body);
     }
 
     @ApiOperation({ summary: 'Retrieve a vector store' })
     @Get(':vectorStoreId')
-    retrieveVectorStore(@Param('vectorStoreId') vectorStoreId: string) {
-        return this.VectorStoresService.retrieveVectorStore(vectorStoreId);
+    async retrieveVectorStore(
+        @Param('vectorStoreId') vectorStoreId: string,
+        @Body() options?: RequestOptionsDto
+    ) {
+        return this.VectorStoresService.retrieveVectorStore(vectorStoreId, options);
     }
 
     @ApiOperation({ summary: 'Update a vector store' })
     @Post(':vectorStoreId')
-    updateVectorStore(
+    async updateVectorStore(
         @Param('vectorStoreId') vectorStoreId: string,
-        @Body() updateVectorStoreDto: UpdateVectorStoreDto,
+        @Body() body: UpdateVectorStoreDto,
     ) {
-        return this.VectorStoresService.updateVectorStore(vectorStoreId, updateVectorStoreDto);
+        return this.VectorStoresService.updateVectorStore(vectorStoreId, body);
     }
 
     @ApiOperation({ summary: 'List all vector stores' })
     @Get()
-    listVectorStores(@Query() query: ListVectorStoresDto) {
+    async listVectorStores(@Body() query: ListVectorStoresDto) {
         return this.VectorStoresService.listVectorStores(query);
     }
 
     @ApiOperation({ summary: 'Delete a vector store' })
     @Delete(':vectorStoreId')
-    deleteVectorStore(@Param('vectorStoreId') vectorStoreId: string) {
-        return this.VectorStoresService.deleteVectorStore(vectorStoreId);
+    deleteVectorStore(
+        @Param('vectorStoreId') vectorStoreId: string,
+        @Body() options?: RequestOptionsDto
+    ) {
+        return this.VectorStoresService.deleteVectorStore(vectorStoreId, options);
     }
 
     // VectorStores-Files 8 Endpoints
         @ApiOperation({ summary: 'Create a vector store file' })
         @Post(':vectorStoreId/files')
-        createVectorStoreFile(
+        async createVectorStoreFile(
             @Param('vectorStoreId') vectorStoreId: string,
-            @Body() createVectorStoreFileDto: CreateVectorStoreFileDto,
+            @Body() body: CreateVectorStoreFileDto,
         ) {
-            return this.VectorStoresService.createVectorStoreFile(vectorStoreId, createVectorStoreFileDto);
+            return this.VectorStoresService.createVectorStoreFile(vectorStoreId, body);
         }
 
         @ApiOperation({ summary: 'Retrieve a vector store file' })
         @Get(':vectorStoreId/files/:fileId')
-        retrieveVectorStoreFile(
+        async retrieveVectorStoreFile(
             @Param('vectorStoreId') vectorStoreId: string,
             @Param('fileId') fileId: string,
+            @Body() options?: RequestOptionsDto
         ) {
-            return this.VectorStoresService.retrieveVectorStoreFile(vectorStoreId, fileId);
+            return this.VectorStoresService.retrieveVectorStoreFile(vectorStoreId, fileId, options);
         }
 
         @ApiOperation({ summary: 'List all vector store files' })
         @Get(':vectorStoreId/files')
-        listVectorStoreFiles(
+        async listVectorStoreFiles(
             @Param('vectorStoreId') vectorStoreId: string,
-            @Query() query: ListVectorStoreFilesDto,
+            @Body() query: ListVectorStoreFilesDto,
         ) {
             return this.VectorStoresService.listVectorStoreFiles(vectorStoreId, query);
         }
 
         @ApiOperation({ summary: 'Delete a vector store file' })
         @Delete(':vectorStoreId/files/:fileId')
-        deleteVectorStoreFile(
+        async deleteVectorStoreFile(
             @Param('vectorStoreId') vectorStoreId: string,
             @Param('fileId') fileId: string,
+            @Body() options?: RequestOptionsDto
         ) {
-            return this.VectorStoresService.deleteVectorStoreFile(vectorStoreId, fileId);
+            return this.VectorStoresService.deleteVectorStoreFile(vectorStoreId, fileId, options);
         }
 
         @ApiOperation({ summary: 'Create a vector store file and poll until complete' })
         @Post(':vectorStoreId/files/create-and-poll')
-        createFileAndPoll(
+        async createFileAndPoll(
             @Param('vectorStoreId') vectorStoreId: string,
-            @Body() createAndPollDto: FileCreateParamsDto,
+            @Body() createAndPollDto: FileCreateAndPollDto,
         ) {
             return this.VectorStoresService.createFileAndPoll(vectorStoreId, createAndPollDto);
         }
 
         @ApiOperation({ summary: 'Poll the processing status of a vector store file' })
         @Get(':vectorStoreId/files/:fileId/poll')
-        pollFile(
+        async pollFile(
             @Param('vectorStoreId') vectorStoreId: string,
             @Param('fileId') fileId: string,
-            @Query('pollIntervalMs') pollIntervalMs?: number,
+            @Body() options?: ExtendedRequestOptionsDto
         ) {
-            return this.VectorStoresService.pollFile(vectorStoreId, fileId, { pollIntervalMs });
+            return this.VectorStoresService.pollFile(vectorStoreId, fileId, options);
         }
 
         @ApiOperation({ summary: 'Upload a file to a vector store' })
         @Post(':vectorStoreId/files/upload')
-        uploadFile(
+        async uploadFile(
             @Param('vectorStoreId') vectorStoreId: string,
-            @Body() uploadDto: UploadFileDto,
+            @Body() body: UploadFileDto,
         ) {
-            return this.VectorStoresService.uploadFile(vectorStoreId, uploadDto);
+            return this.VectorStoresService.uploadFile(vectorStoreId, body);
         }
 
         @ApiOperation({ summary: 'Upload a file to a vector store and poll until complete' })
         @Post(':vectorStoreId/files/upload-and-poll')
         uploadFileAndPoll(
             @Param('vectorStoreId') vectorStoreId: string,
-            @Body() uploadAndPollDto: UploadFileDto,
+            @Body() body: UploadFileAndPollDto,
         ) {
-            return this.VectorStoresService.uploadFileAndPoll(vectorStoreId, uploadAndPollDto);
+            return this.VectorStoresService.uploadFileAndPoll(vectorStoreId, body);
         }
 
     // VectorStores-FileBatch 7 Endpoints
@@ -122,64 +132,66 @@ export class VectorStoresController {
         @Post(':vectorStoreId/file-batches')
         createVectorStoreFileBatch(
             @Param('vectorStoreId') vectorStoreId: string,
-            @Body() createFileBatchDto: CreateFileBatchDto,
+            @Body() body: CreateFileBatchDto,
         ) {
-            return this.VectorStoresService.createVectorStoreFileBatch(vectorStoreId, createFileBatchDto);
+            return this.VectorStoresService.createVectorStoreFileBatch(vectorStoreId, body);
         }
 
         @ApiOperation({ summary: 'Retrieve a vector store file batch' })
         @Get(':vectorStoreId/file-batches/:batchId')
-        retrieveVectorStoreFileBatch(
+        async retrieveVectorStoreFileBatch(
             @Param('vectorStoreId') vectorStoreId: string,
             @Param('batchId') batchId: string,
+            @Body() options?: RequestOptionsDto
         ) {
-            return this.VectorStoresService.retrieveVectorStoreFileBatch(vectorStoreId, batchId);
+            return this.VectorStoresService.retrieveVectorStoreFileBatch(vectorStoreId, batchId, options);
         }
 
         @ApiOperation({ summary: 'Cancel a vector store file batch' })
         @Post(':vectorStoreId/file-batches/:batchId/cancel')
-        cancelVectorStoreFileBatch(
+        async cancelVectorStoreFileBatch(
             @Param('vectorStoreId') vectorStoreId: string,
             @Param('batchId') batchId: string,
+            @Body() options?: RequestOptionsDto
         ) {
-            return this.VectorStoresService.cancelVectorStoreFileBatch(vectorStoreId, batchId);
+            return this.VectorStoresService.cancelVectorStoreFileBatch(vectorStoreId, batchId, options);
         }
 
         @ApiOperation({ summary: 'Create a file batch and poll until complete' })
         @Post(':vectorStoreId/file-batches/create-and-poll')
-        createFileBatchAndPoll(
+        async createFileBatchAndPoll(
             @Param('vectorStoreId') vectorStoreId: string,
-            @Body() createBatchDto: FileBatchCreateParamsDto,
+            @Body() body: FileBatchCreateAndPollDto,
         ) {
-            return this.VectorStoresService.createFileBatchAndPoll(vectorStoreId, createBatchDto);
+            return this.VectorStoresService.createFileBatchAndPoll(vectorStoreId, body);
         }
 
         @ApiOperation({ summary: 'List all files in a vector store file batch' })
         @Get(':vectorStoreId/file-batches/:batchId/files')
-        listFilesInVectorStoreFileBatch(
+        async listFilesInVectorStoreFileBatch(
             @Param('vectorStoreId') vectorStoreId: string,
             @Param('batchId') batchId: string,
-            @Query() query: ListFilesInFileBatchDto,
+            @Body() query: ListFilesInFileBatchDto,
         ) {
             return this.VectorStoresService.listFilesInVectorStoreFileBatch(vectorStoreId, batchId, query);
         }
 
         @ApiOperation({ summary: 'Poll the processing status of a file batch' })
         @Get(':vectorStoreId/file-batches/:batchId/poll')
-        pollFileBatch(
+        async pollFileBatch(
             @Param('vectorStoreId') vectorStoreId: string,
             @Param('batchId') batchId: string,
-            @Query('pollIntervalMs') pollIntervalMs?: number,
+            @Body() options?: ExtendedRequestOptionsDto
         ) {
-            return this.VectorStoresService.pollFileBatch(vectorStoreId, batchId, { pollIntervalMs });
+            return this.VectorStoresService.pollFileBatch(vectorStoreId, batchId, options);
         }
 
         @ApiOperation({ summary: 'Upload multiple files and poll until batch completes' })
         @Post(':vectorStoreId/file-batches/upload-and-poll')
-        uploadFileBatchAndPoll(
+        async uploadFileBatchAndPoll(
             @Param('vectorStoreId') vectorStoreId: string,
-            @Body() uploadBatchDto: UploadFileBatchDto,
+            @Body() payload: UploadFileBatchDto,
         ) {
-            return this.VectorStoresService.uploadFileBatchAndPoll(vectorStoreId, uploadBatchDto);
+            return this.VectorStoresService.uploadFileBatchAndPoll(vectorStoreId, payload);
         }
 }
