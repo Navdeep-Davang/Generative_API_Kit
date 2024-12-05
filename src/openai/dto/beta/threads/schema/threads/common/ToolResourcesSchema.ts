@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { FileChunkingStrategyParamSchema } from "../../../../vector-stores/schema/FileChunkingStrategyParamSchema";
+import { FileChunkingStrategyParamSchema } from "../../../../vector-stores/common/FileChunkingStrategyParamSchema";
 
 export const ToolResourcesSchema = z.object({
     code_interpreter: z.object({

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ThreadCreateParams } from 'openai/resources/beta/threads/threads';
 import { MessageSchema } from './MessageSchema';
-import { ToolResourcesSchema } from './ToolResourcesSchema';
+import { ToolResourcesSchema } from '../common/ToolResourcesSchema';
   
 
 export const ThreadCreateParams$inboundSchema = z.object({

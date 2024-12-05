@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { MessageSchema } from "./MessageSchema";
-import { ToolResourcesSchema } from "./ToolResourcesSchema";
+import { ToolResourcesSchema } from "../common/ToolResourcesSchema";
 
 export const ThreadSchema = z.object({
     messages: z.array(MessageSchema).optional(),

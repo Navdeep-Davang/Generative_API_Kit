@@ -1,6 +1,7 @@
 
+import { UploadableSchema } from '@/openai/dto/common/UploadableSchema';
 import { z } from 'zod';
-import { UploadableSchema } from '../../Files/schema/CreateFileSchema';
+
 
 export const TranslationCreateParams$inboundSchema = z.object({
   file: UploadableSchema,
