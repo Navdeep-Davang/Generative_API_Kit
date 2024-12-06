@@ -18,10 +18,14 @@ export class MistralService {
   private readonly mistral: Mistral;
   private readonly logger = new Logger(MistralService.name);
 
+  
   constructor(private configService: ConfigService) {
+    const apiKey =  this.configService.get<string>('MISTRAL_API_KEY')
+
     this.mistral = new Mistral({
-      apiKey: this.configService.get<string>('MISTRAL_API_KEY')
+      apiKey: apiKey
     });
+
   }
 
   
@@ -255,8 +259,15 @@ export class MistralService {
   // Chat and completions endpoints
   async chatCompletion(chat: ChatCompletionDto) {
     const { request, options } = chat;
+
+     // Log the request and options using the NestJS logger
+    //  this.logger.log('ChatCompletion service request:', JSON.stringify(request, null, 2));
+    //  this.logger.log('ChatCompletion service options:', JSON.stringify(options, null, 2));
+ 
+
     try {
       const completion = await this.mistral.chat.complete(request, options);
+      this.logger.log('Mistral API ChatCompletion response:', JSON.stringify(completion, null, 2));
        // Check if choices is defined and has at least one element
       if (completion.choices && completion.choices.length > 0) {
         return { success: true, data: completion.choices[0].message };

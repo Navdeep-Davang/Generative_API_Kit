@@ -1,12 +1,13 @@
+import { BetaController } from '@/openai/decorators/openai-beta-controller';
 import { ExtendedRequestOptionsDto } from '@/openai/dto/beta/threads/threads.dto';
 import { CreateFileBatchDto, CreateVectorStoreDto, CreateVectorStoreFileDto, FileBatchCreateAndPollDto, FileCreateAndPollDto, ListFilesInFileBatchDto, ListVectorStoreFilesDto, ListVectorStoresDto, UpdateVectorStoreDto, UploadFileAndPollDto, UploadFileBatchDto, UploadFileDto } from '@/openai/dto/beta/vector-stores/vector-stores.dto';
 import { RequestOptionsDto } from '@/openai/dto/openai/RequestOptions/request-options.dto';
 import { VectorStoresService } from '@/openai/services/beta/vector-stores.service';
-import { Controller, Post, Body, Param, Get, Query, Delete } from '@nestjs/common';
+import {  Post, Body, Param, Get, Delete } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Beta - Vector Stores')
-@Controller('beta/vector-stores')
+@BetaController('vector-stores')
 export class VectorStoresController {
     // Total 20 Endpoints
     constructor(private readonly VectorStoresService: VectorStoresService) {}

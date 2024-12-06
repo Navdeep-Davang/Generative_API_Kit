@@ -1,14 +1,15 @@
 import { ExtendedRequestOptionsDto, ListRunParamsDto, MessageCreateDto, MessageListQueryDto, MessageUpdateDto, RunCreateAndPollDto, RunCreateDto, RunStreamDto, RunSubmitToolOutputsDto, RunSubmitToolOutputsPollDto, RunSubmitToolOutputsStreamDto, RunUpdateDto, StepListQueryDto, StepRetrieveQueryDto, ThreadCreateAndRunDto, ThreadCreateAndRunPollDto, ThreadCreateAndRunStreamDto, ThreadCreateDto, ThreadUpdateDto } from '@/openai/dto/beta/threads/threads.dto';
 import { RequestOptionsDto } from '@/openai/dto/openai/RequestOptions/request-options.dto';
 import { ThreadsService } from '@/openai/services/beta/threads.service';
-import { Controller, Post, Get, Delete, Body, Param, Query, Sse } from '@nestjs/common';
+import {  Post, Get, Delete, Body, Param,Sse } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AssistantStreamEvent } from 'openai/resources/beta/assistants';
 import { Stream } from 'openai/streaming';
 import { Observable, of } from 'rxjs';
+import { BetaController } from '../../decorators/openai-beta-controller';
 
 @ApiTags('Beta - Threads')
-@Controller('beta/threads')
+@BetaController('threads')
 export class ThreadsController {
   constructor(private readonly threadsService: ThreadsService) {}
 

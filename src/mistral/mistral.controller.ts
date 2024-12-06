@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Body, Param, UsePipes, Sse, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, UsePipes, Sse, Patch, Logger } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { MistralService } from './mistral.service';
 import { ChatCompletionDto, ChatCompletionStreamDto } from './dto/Chat/chat.dto';
@@ -18,6 +18,7 @@ import { ChatModerationDto, ContentModerationDto } from './dto/Classifiers/class
 @UsePipes(ZodValidationPipe)
 export class MistralController {
   constructor(private readonly mistralService: MistralService) {}
+  private readonly logger = new Logger(MistralController.name);
 
   // Models endpoints
   @Get('models')

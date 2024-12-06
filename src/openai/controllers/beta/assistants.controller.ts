@@ -1,11 +1,12 @@
-import { Controller, Post, Get, Patch, Delete, Body, Param, Query } from '@nestjs/common';
+import { Post, Get, Patch, Delete, Body, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AssistantsService } from '../../services/beta/assistants.service'; // Assuming service exists
 import { AssistantCreateDto, AssistantListDto, AssistantUpdateDto } from '@/openai/dto/beta/assistants/assistants.dto';
 import { RequestOptionsDto } from '@/openai/dto/openai/RequestOptions/request-options.dto';
+import { BetaController } from '@/openai/decorators/openai-beta-controller';
 
 @ApiTags('Beta - Assistants')
-@Controller('beta/assistants')
+@BetaController('assistants')
 export class AssistantsController {
   constructor(private readonly assistantsService: AssistantsService) {}
 

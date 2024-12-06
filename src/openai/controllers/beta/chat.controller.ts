@@ -1,12 +1,13 @@
-import { Controller, Post, Body, Query, Sse } from '@nestjs/common';
+import {  Post, Body, Sse } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ChatService } from '../../services/beta/chat.service'; // Assuming the service exists
 import { ParseChatCompletionDto, RunToolsDto, StreamChatCompletionDto } from '@/openai/dto/beta/chat/chat.dto';
 import { ChatCompletionStreamingRunner } from 'openai/lib/ChatCompletionStreamingRunner';
 import { Observable, of } from 'rxjs';
+import { BetaController } from '@/openai/decorators/openai-beta-controller';
 
 @ApiTags('Beta - Chat')
-@Controller('beta/chat')
+@BetaController('chat')
 export class ChatController {
     constructor(private readonly chatService: ChatService) {}
 

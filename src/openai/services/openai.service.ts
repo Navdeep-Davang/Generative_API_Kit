@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import OpenAI from 'openai';
 import { ConfigService } from '@nestjs/config';
 import { CreateCompletionDto } from '../dto/openai/Completions/completions.dto';
@@ -15,17 +15,39 @@ import { CreateModerationDto } from '../dto/openai/Moderations/moderations.dto';
 @Injectable()
 export class OpenAIService {
   private openai: OpenAI;
+  private readonly logger = new Logger(OpenAIService.name);
 
   constructor(private configService: ConfigService) {
+	const apiKey = this.configService.get<string>('OPENAI_GITHUB_TOKEN');
+    const baseURL = this.configService.get<string>('OPENAI_BASE_URL');
+    
     this.openai = new OpenAI({
-      apiKey: this.configService.get<string>('OPENAI_API_KEY'),
+      apiKey: apiKey,
+	  baseURL: baseURL
     });
+
+	this.logger.log('Initializing OpenAI service with baseURL: ' + baseURL);
   }
 
 // Completions 1 Service
-	createCompletion(createCompletionDto: CreateCompletionDto) {
-		const {body, options}= createCompletionDto		 
-		return this.openai.completions.create(body, options);
+	async createCompletion(createCompletionDto: CreateCompletionDto) {
+		const {body, options}= createCompletionDto	
+		try {
+			// Making the API call
+			this.logger.log('createCompletion service body: ' + JSON.stringify(body));
+			const response = await this.openai.completions.create(body, options);
+	  
+			// Return structured response if API call is successful
+			this.logger.log('createCompletion service Response: ' + JSON.stringify(response));
+			return {
+			  success: true,
+			  message: 'Completion successfully created',
+			  data: response,
+			};
+		  } catch (error) {
+			this.logger.error(`createCompletion service Error: ${error.message}`);
+			throw error;
+		  }		
 	}
 
 // Embeddings 1 Service
