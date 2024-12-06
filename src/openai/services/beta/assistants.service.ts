@@ -3,7 +3,7 @@ import { RequestOptionsDto } from '@/openai/dto/openai/RequestOptions/request-op
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
-import { Beta } from 'openai/resources'; // Assuming Beta is the SDK resource for Assistants
+
 
 @Injectable()
 export class AssistantsService {
@@ -15,7 +15,7 @@ export class AssistantsService {
         apiKey: this.configService.get<string>('OPENAI_API_KEY')
     });
 
-    this.assistants = new Beta(this.openAIClient).assistants;
+    this.assistants = this.openAIClient.beta.assistants;
   }
 
   // Create an assistant with model and instructions

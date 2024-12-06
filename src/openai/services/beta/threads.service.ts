@@ -3,7 +3,7 @@ import { RequestOptionsDto } from '@/openai/dto/openai/RequestOptions/request-op
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
-import { Beta } from 'openai/resources';
+
 
 @Injectable()
 export class ThreadsService {
@@ -15,7 +15,7 @@ export class ThreadsService {
         apiKey: this.configService.get<string>('OPENAI_API_KEY')
     });
 
-    this.threads = new Beta(this.openAIClient).threads;
+    this.threads = this.openAIClient.beta.threads;
   }
 
 // Threads 7 Services

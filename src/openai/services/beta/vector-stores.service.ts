@@ -4,7 +4,7 @@ import { RequestOptionsDto } from '@/openai/dto/openai/RequestOptions/request-op
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
-import { Beta } from 'openai/resources';
+
 
 @Injectable()
 export class VectorStoresService {
@@ -16,7 +16,7 @@ export class VectorStoresService {
             apiKey: this.configService.get<string>('OPENAI_API_KEY')
         });
 
-      this.vectorStores = new Beta(this.openAIClient).vectorStores;
+        this.vectorStores = this.openAIClient.beta.vectorStores;
     }
 
 

@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 import { ChatCompletionToolRunnerParams } from 'openai/lib/ChatCompletionRunner';
 import { ChatCompletionStreamingToolRunnerParams } from 'openai/lib/ChatCompletionStreamingRunner';
-import { Beta } from 'openai/resources'; // Assuming Beta is the SDK resource for chat completions
  
 @Injectable()
 export class ChatService {
@@ -16,7 +15,7 @@ export class ChatService {
         apiKey: this.configService.get<string>('OPENAI_API_KEY')
     });
 
-    this.chat = new Beta(this.openAIClient).chat;
+    this.chat = this.openAIClient.beta.chat;
   }
 
   // Handling chat completion parsing

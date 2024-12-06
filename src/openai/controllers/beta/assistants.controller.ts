@@ -5,7 +5,7 @@ import { AssistantCreateDto, AssistantListDto, AssistantUpdateDto } from '@/open
 import { RequestOptionsDto } from '@/openai/dto/openai/RequestOptions/request-options.dto';
 
 @ApiTags('Beta - Assistants')
-@Controller('assistants')
+@Controller('beta/assistants')
 export class AssistantsController {
   constructor(private readonly assistantsService: AssistantsService) {}
 
