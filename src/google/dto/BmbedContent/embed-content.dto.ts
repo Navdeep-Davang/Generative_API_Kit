@@ -1,7 +1,7 @@
 import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
 import { EmbedContentRequest$Schema } from "./schema/common/EmbedContentRequestSchema";
-import { PartSchema } from "../BatchEmbedContents/schema/common/PartSchema";
+import { PartSchema } from "../common/PartSchema";
 import { SingleRequestOptionsSchema } from "../SingleRequestOptions/schema/SingleRequestOptionsSchema";
 
 export const EmbedContentSchema = z.object({

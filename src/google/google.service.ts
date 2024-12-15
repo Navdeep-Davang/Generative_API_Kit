@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { GoogleGenerativeAI, EmbedContentResponse, BatchEmbedContentsResponse, ChatSession } from '@google/generative-ai';
-import { GenerateContentDto, GenerateContentStreamDto, StartChatDto, CountTokensDto, EmbedContentDto, BatchEmbedContentsDto } from './dto';
-import * as fs from 'fs';
+import { GenerateContentDto } from './dto/GenerateContent/generate-content.dto';
+import { GenerateContentStreamDto } from './dto/GenerateContentStream/generate-content-stream.dto';
+import { StartChatDto } from './dto/StartChat/start-chat.dto';
+import { CountTokensDto } from './dto/CountTokens/count-tokens.dto';
+import { EmbedContentDto } from './dto/BmbedContent/embed-content.dto';
+import { BatchEmbedContentsDto } from './dto/BatchEmbedContents/batch-embed-contents.dto';
 
 @Injectable()
 export class GoogleService {
@@ -16,48 +20,45 @@ export class GoogleService {
     this.genAI = new GoogleGenerativeAI(apiKey);
   }
 
-  async generateContent(dto: GenerateContentDto): Promise<string> {
+  async generateContent(generateContentDto: GenerateContentDto): Promise<string> {
+    const {request, requestOptions} = generateContentDto
     const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    const image = dto.imagePath
-      ? {
-          inlineData: {
-            data: Buffer.from(fs.readFileSync(dto.imagePath)).toString('base64'),
-            mimeType: 'image/png',
-          },
-        }
-      : undefined;
-
-    const result = await model.generateContent([dto.prompt, image]);
+    const result = await model.generateContent(request, requestOptions);
     return result.response.text();
   }
 
-  async generateContentStream(dto: GenerateContentStreamDto): Promise<string> {
+  async generateContentStream(generateContentStreamDto: GenerateContentStreamDto): Promise<string> {
+    const {request, requestOptions} = generateContentStreamDto
     const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    const result = await model.generateContentStream(dto.request, dto.requestOptions);
+    const result = await model.generateContentStream(request, requestOptions);
     // Implement streaming handling here
     return 'Stream result here'; // Modify this based on how you handle streams
   }
 
-  startChat(dto: StartChatDto): ChatSession {
+  startChat(startChatDto: StartChatDto): ChatSession {
+    const {startChatParams} = startChatDto
     const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    return model.startChat(dto.startChatParams);
+    return model.startChat(startChatParams);
   }
 
-  async countTokens(dto: CountTokensDto): Promise<number> {
+  async countTokens(countTokensDto: CountTokensDto): Promise<number> {
+    const {request, requestOptions} = countTokensDto
     const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const result = await model.countTokens(dto.request, dto.requestOptions);
+    const result = await model.countTokens(request, requestOptions);
     return result.totalTokens;
   }
 
-  async embedContent(dto: EmbedContentDto): Promise<EmbedContentResponse> {
+  async embedContent(embedContentDto: EmbedContentDto): Promise<EmbedContentResponse> {
+    const {request, requestOptions} = embedContentDto
     const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    return model.embedContent(dto.request, dto.requestOptions);
+    return model.embedContent(request, requestOptions);
   }
 
-  async batchEmbedContents(dto: BatchEmbedContentsDto): Promise<BatchEmbedContentsResponse> {
+  async batchEmbedContents(batchEmbedContentsDto: BatchEmbedContentsDto): Promise<BatchEmbedContentsResponse> {
+    const {batchEmbedContentRequest, requestOptions} = batchEmbedContentsDto
     const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    return model.batchEmbedContents(dto.batchEmbedContentRequest, dto.requestOptions);
+    return model.batchEmbedContents(batchEmbedContentRequest, requestOptions);
   }
 }

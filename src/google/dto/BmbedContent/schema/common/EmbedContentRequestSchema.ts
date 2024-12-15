@@ -1,7 +1,7 @@
 import { EmbedContentRequest, TaskType } from "@google/generative-ai";
 import { z } from "zod";
-import { PartSchema } from "../../../BatchEmbedContents/schema/common/PartSchema";
-import { ContentSchema } from "./ContentSchema";
+import { PartSchema } from "../../../common/PartSchema";
+import { ContentSchema } from "../../../common/ContentSchema";
 
 // Enums
 const TaskTypeSchema = z.nativeEnum(TaskType);

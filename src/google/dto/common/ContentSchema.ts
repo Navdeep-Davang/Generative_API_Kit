@@ -1,4 +1,4 @@
-import { PartSchema } from "@/google/dto/BatchEmbedContents/schema/common/PartSchema";
+import { PartSchema } from "@/google/dto/common/PartSchema";
 import { z } from "zod";
 
 // Content schema

@@ -1,4 +1,4 @@
-import { ExecutableCodeLanguage, Outcome } from "@google/generative-ai";
+import { ExecutableCodeLanguage, Outcome, Part } from "@google/generative-ai";
 import { z } from "zod";
 
 
@@ -173,4 +173,4 @@ export const PartSchema = z.union([
   FileDataPartSchema,
   ExecutableCodePartSchema,
   CodeExecutionResultPartSchema,
-]);
+]) satisfies z.ZodType<Part>;
