@@ -10,4 +10,4 @@ export const BatchEmbedContentsSchema = z.object({
   });
   
   // Create BatchEmbedContentsDto
-  export class BatchEmbedContentsDto extends createZodDto(BatchEmbedContentsSchema) {}
+export class BatchEmbedContentsDto extends createZodDto(BatchEmbedContentsSchema) {}
