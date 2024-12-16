@@ -21,44 +21,44 @@ export class GoogleService {
   }
 
   async generateContent(generateContentDto: GenerateContentDto): Promise<string> {
-    const {request, requestOptions} = generateContentDto
-    const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const {modelParams, requestOptions, request, singleRequestOptions} = generateContentDto
+    const model = this.genAI.getGenerativeModel(modelParams, requestOptions);
 
-    const result = await model.generateContent(request, requestOptions);
+    const result = await model.generateContent(request, singleRequestOptions);
     return result.response.text();
   }
 
   async generateContentStream(generateContentStreamDto: GenerateContentStreamDto): Promise<string> {
-    const {request, requestOptions} = generateContentStreamDto
-    const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const {modelParams, requestOptions, request, singleRequestOptions} = generateContentStreamDto
+    const model = this.genAI.getGenerativeModel(modelParams, requestOptions);
 
-    const result = await model.generateContentStream(request, requestOptions);
+    const result = await model.generateContentStream(request, singleRequestOptions);
     // Implement streaming handling here
     return 'Stream result here'; // Modify this based on how you handle streams
   }
 
   startChat(startChatDto: StartChatDto): ChatSession {
-    const {startChatParams} = startChatDto
-    const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const {modelParams, requestOptions, startChatParams} = startChatDto
+    const model = this.genAI.getGenerativeModel(modelParams, requestOptions);
     return model.startChat(startChatParams);
   }
 
   async countTokens(countTokensDto: CountTokensDto): Promise<number> {
-    const {request, requestOptions} = countTokensDto
-    const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const result = await model.countTokens(request, requestOptions);
+    const {modelParams, requestOptions, request, singleRequestOptions} = countTokensDto
+    const model = this.genAI.getGenerativeModel(modelParams, requestOptions);
+    const result = await model.countTokens(request, singleRequestOptions);
     return result.totalTokens;
   }
 
   async embedContent(embedContentDto: EmbedContentDto): Promise<EmbedContentResponse> {
-    const {request, requestOptions} = embedContentDto
-    const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    return model.embedContent(request, requestOptions);
+    const {modelParams, requestOptions, request, singleRequestOptions} = embedContentDto
+    const model = this.genAI.getGenerativeModel(modelParams, requestOptions);
+    return model.embedContent(request, singleRequestOptions);
   }
 
   async batchEmbedContents(batchEmbedContentsDto: BatchEmbedContentsDto): Promise<BatchEmbedContentsResponse> {
-    const {batchEmbedContentRequest, requestOptions, modelID} = batchEmbedContentsDto
-    const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    return model.batchEmbedContents(batchEmbedContentRequest, requestOptions);
+    const {modelParams, requestOptions, batchEmbedContentRequest, singleRequestOptions} = batchEmbedContentsDto
+    const model = this.genAI.getGenerativeModel(modelParams, requestOptions);
+    return model.batchEmbedContents(batchEmbedContentRequest, singleRequestOptions);
   }
 }

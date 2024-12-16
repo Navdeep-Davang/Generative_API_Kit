@@ -1,3 +1,4 @@
+import { RequestOptions } from "@google/generative-ai";
 import { z } from "zod";
 
 
@@ -10,6 +11,6 @@ export const RequestOptionsSchema = z.object({
       z.custom<Headers>(), // Allow `Headers` object (native to the browser or Node.js)
       z.record(z.string(), z.string()), // Or a record of string keys and values
     ]).optional(), // Optional custom HTTP headers
-  });
+  }) satisfies z.ZodType<RequestOptions>;
   
 
