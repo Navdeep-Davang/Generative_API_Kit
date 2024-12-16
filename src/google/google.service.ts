@@ -57,7 +57,7 @@ export class GoogleService {
   }
 
   async batchEmbedContents(batchEmbedContentsDto: BatchEmbedContentsDto): Promise<BatchEmbedContentsResponse> {
-    const {batchEmbedContentRequest, requestOptions} = batchEmbedContentsDto
+    const {batchEmbedContentRequest, requestOptions, modelID} = batchEmbedContentsDto
     const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
     return model.batchEmbedContents(batchEmbedContentRequest, requestOptions);
   }
