@@ -20,6 +20,10 @@ export class OpenAIService {
   constructor(private configService: ConfigService) {
 	const apiKey = this.configService.get<string>('OPENAI_GITHUB_TOKEN');
     const baseURL = this.configService.get<string>('OPENAI_BASE_URL');
+
+	if (!apiKey) {
+		throw new Error('OPENAI_API_KEY is not defined in the environment variables');
+	}
     
     this.openai = new OpenAI({
       apiKey: apiKey,

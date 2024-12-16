@@ -22,6 +22,10 @@ export class MistralService {
   constructor(private configService: ConfigService) {
     const apiKey =  this.configService.get<string>('MISTRAL_API_KEY')
 
+    if (!apiKey) {
+      throw new Error('MISTRAL_API_KEY is not defined in the environment variables');
+    }
+    
     this.mistral = new Mistral({
       apiKey: apiKey
     });

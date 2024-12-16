@@ -6,19 +6,24 @@ import { StartChatDto } from './dto/StartChat/start-chat.dto';
 import { CountTokensDto } from './dto/CountTokens/count-tokens.dto';
 import { EmbedContentDto } from './dto/BmbedContent/embed-content.dto';
 import { BatchEmbedContentsDto } from './dto/BatchEmbedContents/batch-embed-contents.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class GoogleService {
   private genAI: GoogleGenerativeAI;
 
-  constructor() {
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-      throw new Error('API_KEY is not defined in the environment variables');
-    }
 
-    this.genAI = new GoogleGenerativeAI(apiKey);
-  }
+  constructor(private configService: ConfigService) {
+      const apiKey =  this.configService.get<string>('GOOGLE_GENERATIVEAI_API_KEY')
+      
+      if (!apiKey) {
+        throw new Error('GOOGLE_GENERATIVEAI_API_KEY is not defined in the environment variables');
+      }
+
+      this.genAI = new GoogleGenerativeAI(apiKey) ;
+  
+    }
+ 
 
   async generateContent(generateContentDto: GenerateContentDto): Promise<string> {
     const {modelParams, requestOptions, request, singleRequestOptions} = generateContentDto
